@@ -10,16 +10,14 @@ import FormikLogin from "./FormikLogin";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 const LoginForm = () => {
-  const height = useHeaderHeight();
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="height"
-      keyboardVerticalOffset={-500}
-      enabled
-    >
+    <View>
       <LoginImage />
-      <View style={{ flex: 1, justifyContent: "center" }}>
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={-150}
+        enabled
+      >
         <View style={styles.LoginContaier}>
           <View style={styles.FormikForm}>
             <Text style={styles.MainTitle}>Bloom</Text>
@@ -29,8 +27,8 @@ const LoginForm = () => {
             <FormikLogin />
           </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
