@@ -11,7 +11,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="AppointmentListScreen"
+        initialRouteName="LoginScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
