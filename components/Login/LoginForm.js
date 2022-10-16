@@ -1,21 +1,36 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+} from "react-native";
 import React from "react";
 import FormikLogin from "./FormikLogin";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const LoginForm = () => {
+  const height = useHeaderHeight();
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="height"
+      keyboardVerticalOffset={-500}
+      enabled
+    >
       <LoginImage />
-      <View style={styles.LoginContaier}>
-        <View style={styles.FormikForm}>
-          <Text style={styles.MainTitle}>Bloom</Text>
-          <Text style={styles.SubTitle}>
-            We help you to be the best version of yourself.
-          </Text>
-          <FormikLogin />
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={styles.LoginContaier}>
+          <View style={styles.FormikForm}>
+            <Text style={styles.MainTitle}>Bloom</Text>
+            <Text style={styles.SubTitle}>
+              We help you to be the best version of yourself.
+            </Text>
+            <FormikLogin />
+          </View>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -31,6 +46,7 @@ const LoginImage = () => (
 const styles = StyleSheet.create({
   container: {
     // padding: 20,
+    flex: 1,
   },
   image: {
     width: 200,
