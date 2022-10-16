@@ -13,8 +13,3 @@ export default function App() {
     </View>
   );
 }
-
-//generate random 2 numbers function
-function generateRandomNumbers() {
-  return [Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
-}
