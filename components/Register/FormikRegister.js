@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { launchImageLibrary } from "react-native-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import * as Yup from "yup";
@@ -21,7 +22,11 @@ const RegisterSchema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Passwords must match"),
   email: Yup.string().email().required("Email is required"),
   fullName: Yup.string().required("FullName is required"),
-  Age: Yup.string().required("Age is required"),
+  age: Yup.number().required("Age is required"),
+  bio: Yup.string()
+    .required("Bio is required")
+    .max(200, "Bio is too long - should be 200 characters maximum"),
+  position: Yup.string().required("Position is required"),
 });
 
 const FormikRegister = () => {
@@ -35,6 +40,8 @@ const FormikRegister = () => {
         fullName: "",
         age: "",
         Repassword: "",
+        bio: "",
+        position: "",
       }}
       onSubmit={(values) => {
         console.log("Values", values);
@@ -43,14 +50,7 @@ const FormikRegister = () => {
       validationSchema={RegisterSchema}
       validateOnMount={false}
     >
-      {({
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        values,
-        errors,
-        isValid,
-      }) => (
+      {({ handleBlur, handleChange, handleSubmit, values, errors }) => (
         <>
           <View style={styles.container}>
             <View style={styles.textfield}>
@@ -67,10 +67,12 @@ const FormikRegister = () => {
             {errors.fullName && (
               <Text style={styles.formikErrorMessage}>{errors.fullName}</Text>
             )}
+
             <View style={styles.textfield}>
               <TextInput
                 placeholder="Age"
                 placeholderTextColor="gray"
+                keyboardType="numeric"
                 multiline={false}
                 style={styles.input}
                 onChangeText={handleChange("age")}
@@ -86,9 +88,10 @@ const FormikRegister = () => {
               style={{
                 borderRadius: 5,
                 borderWidth: 1,
-                paddingHorizontal: 0,
+                paddingVertical: 0,
                 borderColor: "gray",
                 marginHorizontal: 10,
+                marginVertical: 10,
               }}
             >
               <Picker
@@ -111,23 +114,32 @@ const FormikRegister = () => {
                     placeholder="Bio"
                     placeholderTextColor="gray"
                     multiline={true}
-                    style={styles.input}
+                    style={[styles.input, { height: 120 }]}
                     onChangeText={handleChange("bio")}
                     onBlur={handleBlur("bio")}
                     value={values.bio}
                   />
                 </View>
-                {/* <View style={styles.textfield}>
+                {errors.bio && (
+                  <Text style={styles.formikErrorMessage}>{errors.bio}</Text>
+                )}
+
+                <View style={styles.textfield}>
                   <TextInput
-                    placeholder="Specialization"
+                    placeholder="Position"
                     placeholderTextColor="gray"
                     multiline={false}
                     style={styles.input}
-                    onChangeText={handleChange("email")}
-                    onBlur={handleBlur("email")}
-                    value={values.email}
+                    onChangeText={handleChange("position")}
+                    onBlur={handleBlur("position")}
+                    value={values.position}
                   />
-                </View> */}
+                </View>
+                {errors.position && (
+                  <Text style={styles.formikErrorMessage}>
+                    {errors.position}
+                  </Text>
+                )}
               </View>
             ) : null}
 
@@ -178,6 +190,30 @@ const FormikRegister = () => {
               <Text style={styles.formikErrorMessage}>{errors.Repassword}</Text>
             )}
           </View>
+
+          <TouchableOpacity
+            activeOpacity={0.5}
+            style={{
+              backgroundColor: "#04b040",
+              borderRadius: 15,
+              paddingHorizontal: 15,
+              paddingVertical: 5,
+              alignItems: "center",
+              shadowColor: "#E67E22",
+              shadowOpacity: 0.8,
+              elevation: 8,
+            }}
+            onPress={() => {
+              let options = {
+                mediaType: "photo",
+                includeBase64: true,
+                quality: 1,
+              };
+              launchImageLibrary({ noData: true });
+            }}
+          >
+            <Text>Open</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleSubmit}
