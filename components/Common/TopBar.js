@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    fontWeight: "500",
+    color: "#1A2042",
   },
 });
 

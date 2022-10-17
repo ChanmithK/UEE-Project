@@ -4,10 +4,10 @@ import {
   StyleSheet,
   Image,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import FormikLogin from "./FormikLogin";
-import { useHeaderHeight } from "@react-navigation/elements";
 
 const LoginForm = () => {
   return (
@@ -15,7 +15,7 @@ const LoginForm = () => {
       <LoginImage />
       <KeyboardAvoidingView
         behavior="position"
-        keyboardVerticalOffset={-150}
+        keyboardVerticalOffset={-110}
         enabled
       >
         <View style={styles.LoginContaier}>
@@ -24,7 +24,14 @@ const LoginForm = () => {
             <Text style={styles.SubTitle}>
               We help you to be the best version of yourself.
             </Text>
-            <FormikLogin />
+            <View style={{ marginTop: 9 }}>
+              <FormikLogin />
+            </View>
+            <View>
+              <TouchableOpacity>
+                <Text style={styles.CreateAccount}>Create an account</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -52,6 +59,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   LoginContaier: {
+    elevation: 10,
     backgroundColor: "white",
     borderRadius: 50,
     height: 500,
@@ -73,11 +81,17 @@ const styles = StyleSheet.create({
     color: "#1A2042",
     fontFamily: "Roboto",
     fontWeight: "600",
+    marginTop: 3,
   },
   Image: {
     width: 310,
     height: 340,
     marginLeft: 50,
+  },
+  CreateAccount: {
+    fontSize: 15,
+    alignSelf: "center",
+    color: "#ED6A8C",
   },
 });
 

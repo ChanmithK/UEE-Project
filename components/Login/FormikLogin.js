@@ -41,7 +41,7 @@ const FormikLogin = () => {
           <View style={styles.container}>
             <View style={styles.textfield}>
               <TextInput
-                placeholder="Email"
+                placeholder="Email address"
                 placeholderTextColor="gray"
                 multiline={false}
                 style={styles.input}
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   },
   textfield: {
     padding: 10,
+    marginTop: 3,
   },
   input: {
     borderColor: "gray",
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     padding: 10,
     borderRadius: 5,
+    marginTop: 30,
     backgroundColor: "#ED6A8C",
   },
   buttonText: {
