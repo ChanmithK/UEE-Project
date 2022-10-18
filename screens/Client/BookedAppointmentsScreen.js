@@ -11,7 +11,7 @@ const BookedAppointmentsScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       <BookedAppointments />
-      {/* <BottomTabs icons={bottomTabIcons} /> */}
+      <BottomTabs icons={bottomTabIcons} />
     </SafeAreaView>
   );
 };

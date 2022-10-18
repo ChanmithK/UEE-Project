@@ -1,4 +1,11 @@
-import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import TopBar from "../Common/TopBar";
 import { Image } from "react-native";
@@ -6,12 +13,13 @@ import { MENTORSLIST } from "../Data/Mentors";
 import { APPOINTMENTS } from "../Data/Appointments";
 
 const BookedAppointments = () => {
+  const windowHeight = Dimensions.get("window").height;
   return (
-    <View>
+    <View style={{ height: windowHeight }}>
       <TopBar title="Booked Appointments" isFilterAvailable="true" />
       <View style={styles.MainContainer}>
         <SearchBar />
-        <View style={{ height: "85%" }}>
+        <View>
           <ScrollView showsVerticalScrollIndicator={false}>
             <AppointmentList />
           </ScrollView>
@@ -41,7 +49,7 @@ const SearchBar = () => (
 );
 
 const AppointmentList = () => (
-  <View>
+  <View style={{ marginBottom: 250 }}>
     {APPOINTMENTS.map((appointment, index) => (
       <View style={styles.appointmentContainer} key={index}>
         <Image source={{ uri: appointment.image }} style={styles.image} />
