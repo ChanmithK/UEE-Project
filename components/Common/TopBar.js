@@ -7,7 +7,7 @@ const TopBar = ({ title, isFilterAvailable }) => {
       <TouchableOpacity>
         <Image
           style={styles.icon}
-          source={require("../../assets/icons/left-arrow.png")}
+          source={require("../../assets/icons/left-arrow.svg")}
         />
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>
@@ -15,7 +15,7 @@ const TopBar = ({ title, isFilterAvailable }) => {
         <TouchableOpacity>
           <Image
             style={styles.icon}
-            source={require("../../assets/icons/filter.png")}
+            source={require("../../assets/icons/filter.svg")}
           />
         </TouchableOpacity>
       ) : (
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     resizeMode: "contain",
   },
   title: {

@@ -1,16 +1,23 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import TopBar from "../../components/Common/TopBar";
 import AppointmentList from "../../components/Counsellor/AppointmentList/AppointmentList";
 
 const AppointmentListScreen = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <TopBar title="Appointments" isFilterAvailable="true" />
       <AppointmentList />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#EBF0F9",
+    height: "100%",
+  },
+});
 
 export default AppointmentListScreen;
