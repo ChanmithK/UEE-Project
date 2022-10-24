@@ -7,6 +7,14 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "@firebase/auth";
+import { auth, db, storage } from "../../firebase";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -18,12 +26,21 @@ const LoginSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
 });
 
+const onLogin = async (email, password) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    console.log("Logged in successfully", email, password);
+  } catch (error) {
+    console.log("Error logging in: ", error);
+  }
+};
+
 const FormikLogin = () => {
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
       onSubmit={(values) => {
-        console.log("Values", values);
+        onLogin(values.email, values.password);
         // navigation.goBack();
       }}
       validationSchema={LoginSchema}
