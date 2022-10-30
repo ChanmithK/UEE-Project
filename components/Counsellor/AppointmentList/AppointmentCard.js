@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { TouchableOpacity } from "react-native-web";
 
 const AppointmentCard = () => {
   return (
@@ -13,7 +12,7 @@ const AppointmentCard = () => {
         <View>
           <Image
             style={styles.status}
-            source={require("../../../assets/icons/filter.png")}
+            source={require("../../../assets/icons/RedOval.svg")}
           />
         </View>
       </View>
@@ -27,21 +26,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: 15,
     marginVertical: 5,
-    backgroundColor: "green",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
   },
   name: {
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "Arial",
   },
   date: {
     fontSize: 13,
     paddingTop: 10,
+    fontFamily: "Arial",
   },
   status: {
-    width: 30,
-    height: 30,
+    marginTop: 2,
+    width: 16,
+    height: 16,
     resizeMode: "contain",
   },
 });
