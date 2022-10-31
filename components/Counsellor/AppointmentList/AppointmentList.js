@@ -61,7 +61,7 @@ const CounsellorAppointmentList = () => {
       const getAppointments = async () => {
         const filterdData = query(
           usersCollectionRef,
-          where("counsellorId", "==", "12345")
+          where("counsellorId", "==", "kkh04HnoCIVv7kbnkXYL")
         );
         const querySnapshot = await getDocs(filterdData);
         setAppointments(
