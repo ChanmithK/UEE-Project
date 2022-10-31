@@ -117,4 +117,28 @@ export const APPOINTMENTS = [
     time: "12:00 PM",
     status: 3,
   },
+  {
+    id: 10,
+    name: "Dr. Jane Doe",
+    image:
+      "https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    category: "Mental Health",
+    rating: 4.5,
+    reviews: 100,
+    date: "12/12/2020",
+    time: "12:00 PM",
+    status: 3,
+  },
+  {
+    id: 10,
+    name: "Dr. Jane Doe",
+    image:
+      "https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    category: "Mental Health",
+    rating: 4.5,
+    reviews: 100,
+    date: "12/12/2020",
+    time: "12:00 PM",
+    status: 3,
+  },
 ];

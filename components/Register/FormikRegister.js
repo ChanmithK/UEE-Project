@@ -12,6 +12,8 @@ import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const RegisterSchema = Yup.object().shape({
   password: Yup.string()
@@ -30,7 +32,22 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const FormikRegister = () => {
+  const usersCollectionRef = collection(db, "Users");
   const [selectedValue, setSelectedValue] = useState("");
+
+  const createUser = async (values) => {
+    // try {
+    //   const docRef = await addDoc(usersCollectionRef, {
+    //     ...values,
+    //     position: selectedValue,
+    //   });
+    //   console.log("Document written with ID: ", docRef.id);
+    // } catch (e) {
+    //   console.error("Error adding document: ", e);
+    // }
+    // alert("User Created", values);
+    console.log("Values", values);
+  };
 
   return (
     <Formik
@@ -44,7 +61,8 @@ const FormikRegister = () => {
         position: "",
       }}
       onSubmit={(values) => {
-        console.log("Values", values);
+        createUser(values);
+        // console.log("Values", values);
         // navigation.goBack();
       }}
       validationSchema={RegisterSchema}

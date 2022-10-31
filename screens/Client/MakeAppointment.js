@@ -1,12 +1,12 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
-import AppointmentList from "../../components/Counsellor/AppointmentList/AppointmentList";
+import MakeAppointmentSubPage from "./SubScreens/MakeAppointmentSubPage";
 
-const AppointmentListScreen = () => {
+const MakeAppointment = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <AppointmentList />
+      <MakeAppointmentSubPage />
     </SafeAreaView>
   );
 };
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppointmentListScreen;
+export default MakeAppointment;
