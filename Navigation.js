@@ -10,6 +10,12 @@ import ViewAppointment from "./screens/Counsellor/ViewAppointmentMainPage";
 import CounsellorProfile from "./screens/Counsellor/CounsellorProfile";
 import CounsellorProfileUpdate from "./screens/Counsellor/CounsellorProfileUpdate";
 import MakeAppointment from "./screens/Client/MakeAppointment";
+import ViewCounsellor from "./screens/Client/ViewCounsellor";
+import ViewArticles from "./screens/Client/ViewArticles";
+import ViewArticle from "./screens/Client/ViewArticle";
+import ViewClientAppointment from "./screens/Client/ViewAppointment";
+import ViewCounsellors from "./screens/Client/ViewCounsellors";
+import ViewMentors from "./screens/Client/ViewMentors";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -17,7 +23,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="AppointmentListScreen"
+        initialRouteName="ViewMentorsScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
@@ -29,7 +35,22 @@ const SignedInStack = () => {
           name="BookedAppointmentsScreen"
           component={ClientBookedAppointmentsScreen}
         />
-        <Stack.Screen name="MakeAppointment" component={MakeAppointment} />
+        <Stack.Screen
+          name="MakeAppointmentScreen"
+          component={MakeAppointment}
+        />
+        <Stack.Screen name="ViewCounsellorScreen" component={ViewCounsellor} />
+        <Stack.Screen
+          name="ViewCounsellorsScreen"
+          component={ViewCounsellors}
+        />
+        <Stack.Screen name="ViewMentorsScreen" component={ViewMentors} />
+        <Stack.Screen name="ViewArticlesScreen" component={ViewArticles} />
+        <Stack.Screen name="ViewArticleScreen" component={ViewArticle} />
+        <Stack.Screen
+          name="ViewClientAppointmentScreen"
+          component={ViewClientAppointment}
+        />
 
         {/* Counsellor Screens */}
         <Stack.Screen
