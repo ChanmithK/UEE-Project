@@ -24,7 +24,7 @@ import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
 
-const CounsellorProfileSubPage = () => {
+const ViewCounsellorSubPage = () => {
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
@@ -127,14 +127,18 @@ const CounsellorProfileSubPage = () => {
         <View style={{ maxHeight: 450 }}>
           <ScrollView>
             <View>
-              <Text style={styles.mainFieldName}>Bio</Text>
+              <Text style={styles.mainFieldName}>About Counsellor</Text>
               <Text style={styles.fieldData}>{data.bio}</Text>
               <Text style={styles.mainFieldName}>Email</Text>
               <Text style={styles.fieldData}>{data.email}</Text>
-              <Text style={styles.mainFieldName}>Date of birth</Text>
-              <Text style={styles.fieldData}>{data.dob}</Text>
+              {/* <Text style={styles.mainFieldName}>Date of birth</Text>
+              <Text style={styles.fieldData}>{data.dob}</Text> */}
               <Text style={styles.mainFieldName}>Sex</Text>
               <Text style={styles.fieldData}>{data.sex}</Text>
+              <Text style={styles.mainFieldName}>Working time</Text>
+              <Text style={styles.fieldData}>
+                Mon - Sat ({data.workingTimeFrom} - {data.workingTimeTo})
+              </Text>
             </View>
           </ScrollView>
         </View>
@@ -164,7 +168,7 @@ const CounsellorProfileSubPage = () => {
             }}
             onPress={toggleDeclineModal}
           >
-            <Text style={styles.buttonText}>Edit</Text>
+            <Text style={styles.buttonText}>Book an appointment</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -224,4 +228,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CounsellorProfileSubPage;
+export default ViewCounsellorSubPage;
