@@ -5,23 +5,81 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Image,
 } from "react-native";
-import React from "react";
-import TopBar from "../Common/TopBar";
-import { Image } from "react-native";
-import { MENTORSLIST } from "../Data/Mentors";
-import { APPOINTMENTS } from "../Data/Appointments";
+import React, { useState, useEffect } from "react";
+import TopBar from "../../../components/Common/TopBar";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../../../firebase";
+import { APPOINTMENTS } from "../../../components/Data/Appointments";
+const { useNavigation } = require("@react-navigation/native");
 
 const BookedAppointments = () => {
   const windowHeight = Dimensions.get("window").height;
+
+  const navigation = useNavigation();
+
+  const [appointmentList, setAppointmentList] = useState([]);
+  const [searchKey, setSearchKey] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+
+  useEffect(() => {
+    const getAppointments = async () => {
+      const appointments = await getDocs(
+        query(
+          collection(db, "CounsellorAppointments"),
+          where("userId", "==", "kkh04HnoCIVv7kbnkXYL")
+        )
+      );
+      setAppointmentList(appointments.docs.map((doc) => doc.data()));
+      setSearchResult(appointments.docs.map((doc) => doc.data()));
+    };
+    getAppointments();
+  }, []);
+
+  const searchAppointments = (text) => {
+    setSearchKey(text);
+
+    setSearchResult(
+      appointmentList.filter(
+        (appointment) =>
+          appointment.time.toLowerCase().includes(text.toLowerCase()) ||
+          appointment.date.toLowerCase().includes(text.toLowerCase()) ||
+          appointment.description.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
+
   return (
     <View style={{ height: windowHeight }}>
       <TopBar title="Booked Appointments" isFilterAvailable="true" />
       <View style={styles.MainContainer}>
-        <SearchBar />
+        <View>
+          <TextInput
+            placeholder="Search"
+            placeholderTextColor="gray"
+            multiline={false}
+            style={styles.input}
+            onChangeText={(text) => searchAppointments(text)}
+            value={searchKey}
+          />
+          <Image
+            source={{
+              uri: "https://img.icons8.com/ios/50/000000/search--v1.png",
+            }}
+            style={styles.searchIcon}
+          />
+        </View>
         <View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <AppointmentList />
+            <AppointmentList searchResult={searchResult} />
           </ScrollView>
         </View>
       </View>
@@ -29,28 +87,9 @@ const BookedAppointments = () => {
   );
 };
 
-const SearchBar = () => (
-  <View>
-    <TextInput
-      placeholder="Search"
-      secureTextEntry={true}
-      placeholderTextColor="gray"
-      multiline={false}
-      style={styles.input}
-      //   onChangeText={handleChange("password")}
-      //   onBlur={handleBlur("password")}
-      //   value={values.password}
-    />
-    <Image
-      source={{ uri: "https://img.icons8.com/ios/50/000000/search--v1.png" }}
-      style={styles.searchIcon}
-    />
-  </View>
-);
-
-const AppointmentList = () => (
+const AppointmentList = ({ searchResult }) => (
   <View style={{ marginBottom: 250 }}>
-    {APPOINTMENTS.map((appointment, index) => (
+    {searchResult.map((appointment, index) => (
       <View style={styles.appointmentContainer} key={index}>
         <Image source={{ uri: appointment.image }} style={styles.image} />
         <View style={styles.appointmentDetails}>
@@ -61,7 +100,7 @@ const AppointmentList = () => (
           </View>
         </View>
         <View>
-          {appointment.status === 1 ? (
+          {appointment.status === "Reject" ? (
             <Image
               source={{
                 uri: "https://img.icons8.com/ios-glyphs/30/FF3B30/filled-circle.png",
@@ -74,7 +113,7 @@ const AppointmentList = () => (
                 },
               ]}
             />
-          ) : appointment.status === 2 ? (
+          ) : appointment.status === "Pending" ? (
             <Image
               source={{
                 uri: "https://img.icons8.com/ios-glyphs/30/FFCC00/filled-circle.png",

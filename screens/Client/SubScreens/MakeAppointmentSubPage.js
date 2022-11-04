@@ -19,7 +19,7 @@ import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { addDoc, collection } from "firebase/firestore";
 
-const MakeAppointmentSubPage = () => {
+const MakeAppointmentSubPage = ({ id }) => {
   const [data, setData] = useState("");
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -35,6 +35,7 @@ const MakeAppointmentSubPage = () => {
   const [newtime, setNewTime] = useState("");
   const [displaymode, setMode] = useState("time");
   const [isDisplayDate, setShow] = useState(false);
+
   const changeSelectedDate = (event, selectedDate) => {
     const currentDate = selectedDate || mydate;
 
@@ -74,10 +75,12 @@ const MakeAppointmentSubPage = () => {
       setShow(false);
     }
   };
+
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
+  
   const displayDatepicker = () => {
     showMode("date");
   };
@@ -88,7 +91,7 @@ const MakeAppointmentSubPage = () => {
 
   const createAppointment = async () => {
     addDoc(appointmentCollectionRef, {
-      counsellorId: "kkh04HnoCIVv7kbnkXYL",
+      counsellorId: id,
       userId: "kkh04HnoCIVv7kbnkXYL",
       appointmentId: "23456",
       name: "Sanduni Perera",

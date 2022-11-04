@@ -3,10 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import ViewCounsellorSubPage from "./SubScreens/ViewCounsellorSubPage";
 
-const ViewCounsellor = () => {
+const ViewCounsellor = ({ navigation, route }) => {
+  const id = route.params.id;
+
   return (
     <SafeAreaView style={styles.container}>
-      <ViewCounsellorSubPage />
+      <ViewCounsellorSubPage id={id} />
     </SafeAreaView>
   );
 };

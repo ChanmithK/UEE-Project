@@ -27,7 +27,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="UpdateArticleScreen"
+        initialRouteName="BookedAppointmentsScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />

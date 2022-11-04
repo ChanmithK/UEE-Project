@@ -23,14 +23,16 @@ import {
 import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewCounsellorSubPage = () => {
+const ViewCounsellorSubPage = ({ id }) => {
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
+  const navigation = useNavigation();
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+      const userDoc = doc(db, "Users", id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
@@ -110,14 +112,14 @@ const ViewCounsellorSubPage = () => {
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
               >
-                Certified counsellor
+                {data.category}
               </Text>
             </View>
             <View style={{ marginLeft: 8 }}>
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "500" }}
               >
-                25 sessions
+                {data.sessions} sessions
               </Text>
             </View>
           </View>
@@ -166,7 +168,12 @@ const ViewCounsellorSubPage = () => {
               marginTop: 30,
               //   marginHorizontal: 0,
             }}
-            onPress={toggleDeclineModal}
+            onPress={
+              //toggleDeclineModal
+              () => {
+                navigation.navigate("MakeAppointmentScreen", { id: data.id });
+              }
+            }
           >
             <Text style={styles.buttonText}>Book an appointment</Text>
           </TouchableOpacity>
