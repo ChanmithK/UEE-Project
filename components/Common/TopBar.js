@@ -1,13 +1,16 @@
 import { View, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const TopBar = ({ title, isFilterAvailable }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
         <Image
           style={styles.icon}
-          source={require("../../assets/icons/left-arrow.svg")}
+          source={require("../../assets/icons/arrow.png")}
         />
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>
@@ -15,7 +18,7 @@ const TopBar = ({ title, isFilterAvailable }) => {
         <TouchableOpacity>
           <Image
             style={styles.icon}
-            source={require("../../assets/icons/filter.svg")}
+            source={require("../../assets/icons/sort.png")}
           />
         </TouchableOpacity>
       ) : (
@@ -34,6 +37,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   icon: {
+    top: 2,
     width: 20,
     height: 20,
     resizeMode: "contain",

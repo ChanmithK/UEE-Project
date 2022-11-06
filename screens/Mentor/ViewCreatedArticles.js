@@ -1,13 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
-import MakeAppointmentSubPage from "./SubScreens/MakeAppointmentSubPage";
+import ViewCreatedArticlesSubPage from "./SubScreens/ViewCreatedArticlesSubPage";
+import BottomTabs, { bottomTabIcons } from "../../components/Common/BottomTabs";
 
-const MakeAppointment = ({ navigation, route }) => {
-  const id = route.params.id;
+const ViewCreatedArticles = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <MakeAppointmentSubPage id={id} />
+      <ViewCreatedArticlesSubPage />
+      <BottomTabs icons={bottomTabIcons} />
     </SafeAreaView>
   );
 };
@@ -19,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MakeAppointment;
+export default ViewCreatedArticles;

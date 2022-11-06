@@ -23,14 +23,16 @@ import {
 import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
 
-const CounsellorProfileSubPage = () => {
+const ViewCounsellorSubPage = ({ id }) => {
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
+  const navigation = useNavigation();
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+      const userDoc = doc(db, "Users", id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
@@ -110,14 +112,14 @@ const CounsellorProfileSubPage = () => {
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
               >
-                Certified counsellor
+                {data.category}
               </Text>
             </View>
             <View style={{ marginLeft: 8 }}>
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "500" }}
               >
-                25 sessions
+                {data.sessions} sessions
               </Text>
             </View>
           </View>
@@ -127,14 +129,18 @@ const CounsellorProfileSubPage = () => {
         <View style={{ maxHeight: 450 }}>
           <ScrollView>
             <View>
-              <Text style={styles.mainFieldName}>Bio</Text>
+              <Text style={styles.mainFieldName}>About Counsellor</Text>
               <Text style={styles.fieldData}>{data.bio}</Text>
               <Text style={styles.mainFieldName}>Email</Text>
               <Text style={styles.fieldData}>{data.email}</Text>
-              <Text style={styles.mainFieldName}>Date of birth</Text>
-              <Text style={styles.fieldData}>{data.dob}</Text>
+              {/* <Text style={styles.mainFieldName}>Date of birth</Text>
+              <Text style={styles.fieldData}>{data.dob}</Text> */}
               <Text style={styles.mainFieldName}>Sex</Text>
               <Text style={styles.fieldData}>{data.sex}</Text>
+              <Text style={styles.mainFieldName}>Working time</Text>
+              <Text style={styles.fieldData}>
+                Mon - Sat ({data.workingTimeFrom} - {data.workingTimeTo})
+              </Text>
             </View>
           </ScrollView>
         </View>
@@ -162,9 +168,14 @@ const CounsellorProfileSubPage = () => {
               marginTop: 30,
               //   marginHorizontal: 0,
             }}
-            onPress={toggleDeclineModal}
+            onPress={
+              //toggleDeclineModal
+              () => {
+                navigation.navigate("MakeAppointmentScreen", { id: data.id });
+              }
+            }
           >
-            <Text style={styles.buttonText}>Edit</Text>
+            <Text style={styles.buttonText}>Book an appointment</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -224,4 +235,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CounsellorProfileSubPage;
+export default ViewCounsellorSubPage;

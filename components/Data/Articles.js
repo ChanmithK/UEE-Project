@@ -7,6 +7,8 @@ export const ARTICLES = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    author: "Dilani Samanthika",
+    hashTags: "#GeneralTopic",
   },
   {
     id: 2,
@@ -16,6 +18,8 @@ export const ARTICLES = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    author: "Dilani Samanthika",
+    hashTags: "#GeneralTopic",
   },
   {
     id: 3,
@@ -25,6 +29,8 @@ export const ARTICLES = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    author: "Dilani Samanthika",
+    hashTags: "#GeneralTopic",
   },
   {
     id: 4,
@@ -34,5 +40,7 @@ export const ARTICLES = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    author: "Dilani Samanthika",
+    hashTags: "#GeneralTopic",
   },
 ];
