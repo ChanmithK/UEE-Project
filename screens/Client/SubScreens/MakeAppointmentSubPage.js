@@ -17,8 +17,9 @@ import { doc, getDoc, addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const MakeAppointmentSubPage = ({ id }) => {
+const MakeAppointmentSubPage = ({ id, name }) => {
   const navigation = useNavigation();
 
   const windowHeight = Dimensions.get("window").height;
@@ -85,10 +86,11 @@ const MakeAppointmentSubPage = ({ id }) => {
     showMode("time");
   };
 
-  const clientID = "kkh04HnoCIVv7kbnkXYL";
-
   const createAppointment = async () => {
-    const userDoc = doc(db, "Users", clientID);
+    const value = await AsyncStorage.getItem("UserID");
+    const user = JSON.parse(value);
+
+    const userDoc = doc(db, "Users", user);
     const docSnap = await getDoc(userDoc);
     const client = docSnap.data();
 
@@ -97,7 +99,8 @@ const MakeAppointmentSubPage = ({ id }) => {
 
     addDoc(appointmentCollectionRef, {
       counsellorId: id,
-      userId: clientID,
+      counsellorName: name,
+      userId: user,
       appointmentId: Math.random() * 100000,
       name: client.name,
       age: client.age,

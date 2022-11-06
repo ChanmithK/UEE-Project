@@ -171,7 +171,10 @@ const ViewCounsellorSubPage = ({ id }) => {
             onPress={
               //toggleDeclineModal
               () => {
-                navigation.navigate("MakeAppointmentScreen", { id: data.id });
+                navigation.navigate("MakeAppointmentScreen", {
+                  id: id,
+                  name: data.name,
+                });
               }
             }
           >

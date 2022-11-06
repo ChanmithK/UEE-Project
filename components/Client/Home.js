@@ -17,13 +17,25 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const user = { id: "kkh04HnoCIVv7kbnkXYL" };
+// const user = { id: "kkh04HnoCIVv7kbnkXYL" };
+
+// const getData = async () => {
+//   try {
+//     const value = await AsyncStorage.getItem("UserData");
+//     if (value !== null) {
+//       const user = { id: value };
+//     }
+//   } catch (e) {
+//     // error reading value
+//   }
+// };
 
 const Home = () => {
   return (
     <View style={styles.MainContainer}>
-      <Header user={user} />
+      <Header />
       <Categories />
       <Mentors />
       <Counsellors />
@@ -32,12 +44,15 @@ const Home = () => {
   );
 };
 
-const Header = ({ user }) => {
+const Header = () => {
   const [userProfile, setUserProfile] = useState("");
 
   useEffect(() => {
     const getProfile = async () => {
-      const userDoc = doc(db, "Users", user.id);
+      const value = await AsyncStorage.getItem("UserID");
+      const user = JSON.parse(value);
+
+      const userDoc = doc(db, "Users", user);
       const docSnap = await getDoc(userDoc);
       setUserProfile(docSnap.data());
     };
@@ -59,7 +74,7 @@ const Header = ({ user }) => {
           </Text>
           <Text style={{ color: "#ED6A8C", fontWeight: "700", fontSize: 24 }}>
             {" "}
-            {userProfile.name}
+            {userProfile.name ? userProfile.name.split(" ")[0] : ""}
           </Text>
         </View>
         <View style={{ marginLeft: 8 }}>
