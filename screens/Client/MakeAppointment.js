@@ -5,9 +5,11 @@ import MakeAppointmentSubPage from "./SubScreens/MakeAppointmentSubPage";
 
 const MakeAppointment = ({ navigation, route }) => {
   const id = route.params.id;
+  const name = route.params.name;
+
   return (
     <SafeAreaView style={styles.container}>
-      <MakeAppointmentSubPage id={id} />
+      <MakeAppointmentSubPage id={id} name={name} />
     </SafeAreaView>
   );
 };

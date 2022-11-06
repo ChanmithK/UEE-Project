@@ -15,6 +15,7 @@ import TopBar from "../../../components/Common/TopBar";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CounsellorProfileUpdateSubPage = () => {
   const [data, setData] = useState("");
@@ -26,7 +27,10 @@ const CounsellorProfileUpdateSubPage = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+      const value = await AsyncStorage.getItem("UserID");
+      const user = JSON.parse(value);
+
+      const userDoc = doc(db, "Users", user);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
