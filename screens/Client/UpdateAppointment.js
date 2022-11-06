@@ -1,14 +1,15 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
-import ViewClientAppointmentSubPage from "./SubScreens/ViewAppointmentSubPage";
+import UpdateAppointmentSubPage from "./SubScreens/UpdateAppointmentSubPage";
 
-const ViewClientAppointment = ({ navigation, route }) => {
+const UpdateAppointment = ({ navigation, route }) => {
   const id = route.params.id;
+  const data = route.params.data;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ViewClientAppointmentSubPage id={id} />
+      <UpdateAppointmentSubPage id={id} data={data} />
     </SafeAreaView>
   );
 };
@@ -20,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewClientAppointment;
+export default UpdateAppointment;

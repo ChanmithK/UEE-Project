@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { APPOINTMENTS } from "../../../components/Data/Appointments";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const { useNavigation } = require("@react-navigation/native");
 
 const BookedAppointments = () => {
@@ -38,8 +39,12 @@ const BookedAppointments = () => {
           where("userId", "==", "kkh04HnoCIVv7kbnkXYL")
         )
       );
-      setAppointmentList(appointments.docs.map((doc) => doc.data()));
-      setSearchResult(appointments.docs.map((doc) => doc.data()));
+      setAppointmentList(
+        appointments.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+      setSearchResult(
+        appointments.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     };
     getAppointments();
   }, []);
@@ -52,7 +57,8 @@ const BookedAppointments = () => {
         (appointment) =>
           appointment.time.toLowerCase().includes(text.toLowerCase()) ||
           appointment.date.toLowerCase().includes(text.toLowerCase()) ||
-          appointment.description.toLowerCase().includes(text.toLowerCase())
+          appointment.description.toLowerCase().includes(text.toLowerCase()) ||
+          appointment.name.toLowerCase().includes(text.toLowerCase())
       )
     );
   };
@@ -87,64 +93,77 @@ const BookedAppointments = () => {
   );
 };
 
-const AppointmentList = ({ searchResult }) => (
-  <View style={{ marginBottom: 250 }}>
-    {searchResult.map((appointment, index) => (
-      <View style={styles.appointmentContainer} key={index}>
-        <Image source={{ uri: appointment.image }} style={styles.image} />
-        <View style={styles.appointmentDetails}>
-          <Text style={styles.appointmentName}>{appointment.name}</Text>
-          <View style={{ flexDirection: "row", marginTop: 5 }}>
-            <Text style={styles.appointmentDate}>{appointment.date} </Text>
-            <Text style={styles.appointmentTime}> {appointment.time}</Text>
+const AppointmentList = ({ searchResult }) => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={{ marginBottom: 250 }}>
+      {searchResult.map((appointment, index) => (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("ViewClientAppointmentScreen", {
+              id: appointment.id,
+            })
+          }
+          key={index}
+        >
+          <View style={styles.appointmentContainer} key={index}>
+            <Image source={{ uri: appointment.image }} style={styles.image} />
+            <View style={styles.appointmentDetails}>
+              <Text style={styles.appointmentName}>{appointment.name}</Text>
+              <View style={{ flexDirection: "row", marginTop: 5 }}>
+                <Text style={styles.appointmentDate}>{appointment.date} </Text>
+                <Text style={styles.appointmentTime}> {appointment.time}</Text>
+              </View>
+            </View>
+            <View style={{ position: "absolute" }}>
+              {appointment.status === "Declined" ? (
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/ios-glyphs/30/FF3B30/filled-circle.png",
+                  }}
+                  style={[
+                    styles.appointmentStatus,
+                    {
+                      height: 15,
+                      width: 15,
+                    },
+                  ]}
+                />
+              ) : appointment.status === "Pending" ? (
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/ios-glyphs/30/FFCC00/filled-circle.png",
+                  }}
+                  style={[
+                    styles.appointmentStatus,
+                    {
+                      height: 15,
+                      width: 15,
+                    },
+                  ]}
+                />
+              ) : (
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/ios-glyphs/30/4CD964/filled-circle.png",
+                  }}
+                  style={[
+                    styles.appointmentStatus,
+                    {
+                      height: 15,
+                      width: 15,
+                    },
+                  ]}
+                />
+              )}
+            </View>
           </View>
-        </View>
-        <View>
-          {appointment.status === "Reject" ? (
-            <Image
-              source={{
-                uri: "https://img.icons8.com/ios-glyphs/30/FF3B30/filled-circle.png",
-              }}
-              style={[
-                styles.appointmentStatus,
-                {
-                  height: 15,
-                  width: 15,
-                },
-              ]}
-            />
-          ) : appointment.status === "Pending" ? (
-            <Image
-              source={{
-                uri: "https://img.icons8.com/ios-glyphs/30/FFCC00/filled-circle.png",
-              }}
-              style={[
-                styles.appointmentStatus,
-                {
-                  height: 15,
-                  width: 15,
-                },
-              ]}
-            />
-          ) : (
-            <Image
-              source={{
-                uri: "https://img.icons8.com/ios-glyphs/30/4CD964/filled-circle.png",
-              }}
-              style={[
-                styles.appointmentStatus,
-                {
-                  height: 15,
-                  width: 15,
-                },
-              ]}
-            />
-          )}
-        </View>
-      </View>
-    ))}
-  </View>
-);
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   MainContainer: {
@@ -205,12 +224,11 @@ const styles = StyleSheet.create({
     color: "#1A2042",
   },
   appointmentStatus: {
-    position: "absolute",
-    left: 90,
+    left: 320,
     fontSize: 13,
     fontWeight: "400",
     color: "#1A2042",
-    marginTop: 10,
+    marginTop: 20,
   },
 });
 
