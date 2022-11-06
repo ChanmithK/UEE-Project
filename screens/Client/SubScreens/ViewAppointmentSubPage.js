@@ -12,11 +12,14 @@ import {
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewClientAppointmentSubPage = () => {
+const ViewClientAppointmentSubPage = ({ id }) => {
+  const navigation = useNavigation();
+
   const [data, setData] = useState("");
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -26,7 +29,7 @@ const ViewClientAppointmentSubPage = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "CounsellorAppointments", "b0ehYF0bai99EHFjwzxz");
+      const userDoc = doc(db, "CounsellorAppointments", id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
@@ -37,6 +40,34 @@ const ViewClientAppointmentSubPage = () => {
     setSex(data.sex);
   }, [data.name, data.bio, data.dob, data.sex]);
 
+  const deleteAppointment = () => {
+    console.log(id);
+    Alert.alert(
+      "Delete Appointment",
+      "Are you sure you want to delete this appointment?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            async function deleteData() {
+              const userDoc = doc(db, "CounsellorAppointments", id);
+              await deleteDoc(userDoc);
+            }
+
+            deleteData();
+            navigation.navigate("BookedAppointmentsScreen");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView
@@ -45,7 +76,7 @@ const ViewClientAppointmentSubPage = () => {
         enabled
       >
         {/* Top bar */}
-        <TopBar title={"Edit Profile"} />
+        <TopBar title={"Appointment details"} />
 
         {/* Content */}
         <View
@@ -205,7 +236,7 @@ const ViewClientAppointmentSubPage = () => {
                   marginTop: 20,
                   marginBottom: 10,
                 }}
-                // onPress={toggleAcceptModal}
+                onPress={deleteAppointment}
               >
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
@@ -222,7 +253,12 @@ const ViewClientAppointmentSubPage = () => {
                   marginTop: 20,
                   marginBottom: 10,
                 }}
-                // onPress={acceptAppointment}
+                onPress={() => {
+                  navigation.navigate("UpdateAppointmentScreen", {
+                    data: data,
+                    id: id,
+                  });
+                }}
               >
                 <Text style={styles.buttonText}>Edit</Text>
               </TouchableOpacity>

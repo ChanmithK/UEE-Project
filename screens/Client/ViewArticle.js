@@ -3,10 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import ViewArticleSubPage from "./SubScreens/ViewArticleSubPage";
 
-const ViewArticle = () => {
+const ViewArticle = ({ navigation, route }) => {
+  const article = route.params.article;
+
   return (
     <SafeAreaView style={styles.container}>
-      <ViewArticleSubPage />
+      <ViewArticleSubPage article={article} />
     </SafeAreaView>
   );
 };

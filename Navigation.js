@@ -20,6 +20,7 @@ import CreateArticle from "./screens/Mentor/CreateArticle";
 import ViewCreatedArticles from "./screens/Mentor/ViewCreatedArticles";
 import ViewCreatedArticle from "./screens/Mentor/ViewCreatedArticle";
 import UpdateArticle from "./screens/Mentor/UpdateArticle";
+import UpdateAppointment from "./screens/Client/UpdateAppointment";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -27,7 +28,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="UpdateArticleScreen"
+        initialRouteName="BookedAppointmentsScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
@@ -54,6 +55,10 @@ const SignedInStack = () => {
         <Stack.Screen
           name="ViewClientAppointmentScreen"
           component={ViewClientAppointment}
+        />
+        <Stack.Screen
+          name="UpdateAppointmentScreen"
+          component={UpdateAppointment}
         />
 
         {/* Counsellor Screens */}

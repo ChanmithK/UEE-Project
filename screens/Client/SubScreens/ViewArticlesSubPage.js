@@ -9,11 +9,48 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { ARTICLES } from "../../../components/Data/Articles";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewArticlesSubPage = () => {
+  const navigation = useNavigation();
+
+  const [articleList, setArticleList] = useState([]);
+  const [searchKey, setSearchKey] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+
+  useEffect(() => {
+    const getArticles = async () => {
+      const articles = await getDocs(collection(db, "Articles"));
+      setArticleList(articles.docs.map((doc) => doc.data()));
+      setSearchResult(articles.docs.map((doc) => doc.data()));
+    };
+    getArticles();
+  }, []);
+
+  const searchArticles = (text) => {
+    setSearchKey(text);
+
+    setSearchResult(
+      articleList.filter(
+        (article) =>
+          article.title.toLowerCase().includes(text.toLowerCase()) ||
+          article.author.toLowerCase().includes(text.toLowerCase()) ||
+          article.category.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Top bar */}
@@ -33,6 +70,8 @@ const ViewArticlesSubPage = () => {
             placeholderTextColor="gray"
             multiline={false}
             style={styles.input}
+            value={searchKey}
+            onChangeText={(text) => searchArticles(text)}
           />
           <Image
             source={{
@@ -46,9 +85,15 @@ const ViewArticlesSubPage = () => {
         <View style={{ marginTop: 20 }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ marginBottom: 250 }}>
-              {ARTICLES.map((article, index) => (
+              {searchResult.map((article, index) => (
                 <View key={index}>
-                  <TouchableOpacity onPress={() => Alert.alert(article.title)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ViewArticleScreen", {
+                        article: article,
+                      })
+                    }
+                  >
                     <View style={styles.articleContainer}>
                       <Image
                         source={{ uri: article.image }}

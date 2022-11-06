@@ -9,11 +9,49 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { MENTORS } from "../../../components/Data/Mentors";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewCounsellorsSubPage = () => {
+  const navigation = useNavigation();
+
+  const [searchKey, setSearchKey] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [counsellorList, setMentorList] = useState([]);
+
+  useEffect(() => {
+    const getMentors = async () => {
+      const counsellors = await getDocs(
+        query(collection(db, "Users"), where("role", "==", "Counsellor"))
+      );
+      setMentorList(counsellors.docs.map((doc) => doc.data()));
+      setSearchResult(counsellors.docs.map((doc) => doc.data()));
+    };
+    getMentors();
+  }, []);
+
+  const searchMentors = (text) => {
+    setSearchKey(text);
+
+    setSearchResult(
+      counsellorList.filter(
+        (counsellor) =>
+          counsellor.name.toLowerCase().includes(text.toLowerCase()) ||
+          counsellor.category.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Top bar */}
@@ -47,7 +85,7 @@ const ViewCounsellorsSubPage = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View>
               <View style={{ marginBottom: 250 }}>
-                {MENTORS.map((counsellor, index) => (
+                {searchResult.map((counsellor, index) => (
                   <View style={styles.counsellorContainer} key={index}>
                     <Image
                       source={{ uri: counsellor.image }}

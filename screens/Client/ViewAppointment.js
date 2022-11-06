@@ -3,10 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import ViewClientAppointmentSubPage from "./SubScreens/ViewAppointmentSubPage";
 
-const ViewClientAppointment = () => {
+const ViewClientAppointment = ({ navigation, route }) => {
+  const id = route.params.id;
+
   return (
     <SafeAreaView style={styles.container}>
-      <ViewClientAppointmentSubPage />
+      <ViewClientAppointmentSubPage id={id} />
     </SafeAreaView>
   );
 };

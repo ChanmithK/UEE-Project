@@ -9,11 +9,51 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { MENTORS } from "../../../components/Data/Mentors";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewMentorsSubPage = () => {
+  const navigation = useNavigation();
+
+  const [searchKey, setSearchKey] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [mentorList, setMentorList] = useState([]);
+
+  useEffect(() => {
+    const getMentors = async () => {
+      const mentors = await getDocs(
+        query(collection(db, "Users"), where("role", "!=", "Mentor"))
+      );
+      setMentorList(mentors.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setSearchResult(
+        mentors.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    };
+    getMentors();
+  }, []);
+
+  const searchMentors = (text) => {
+    setSearchKey(text);
+
+    setSearchResult(
+      mentorList.filter(
+        (mentor) =>
+          mentor.name.toLowerCase().includes(text.toLowerCase()) ||
+          mentor.category.toLowerCase().includes(text.toLowerCase())
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Top bar */}
@@ -33,6 +73,8 @@ const ViewMentorsSubPage = () => {
             placeholderTextColor="gray"
             multiline={false}
             style={styles.input}
+            onChangeText={(text) => searchMentors(text)}
+            value={searchKey}
           />
           <Image
             source={{
@@ -47,21 +89,28 @@ const ViewMentorsSubPage = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View>
               <View style={{ marginBottom: 250 }}>
-                {MENTORS.map((counsellor, index) => (
-                  <View style={styles.counsellorContainer} key={index}>
-                    <Image
-                      source={{ uri: counsellor.image }}
-                      style={styles.image}
-                    />
-                    <View style={styles.counsellorDetails}>
-                      <Text style={styles.counsellorName}>
-                        {counsellor.name}
-                      </Text>
-                      <Text style={styles.counsellorStatus}>
-                        {counsellor.category}
-                      </Text>
+                {searchResult.map((mentor, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() =>
+                      navigation.navigate("ViewCounsellorScreen", {
+                        id: mentor.id,
+                      })
+                    }
+                  >
+                    <View style={styles.mentorContainer} key={index}>
+                      <Image
+                        source={{ uri: mentor.image }}
+                        style={styles.image}
+                      />
+                      <View style={styles.mentorDetails}>
+                        <Text style={styles.mentorName}>{mentor.name}</Text>
+                        <Text style={styles.mentorStatus}>
+                          {mentor.category}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
@@ -99,7 +148,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     color: "#8E8E93",
   },
-  counsellorContainer: {
+  mentorContainer: {
     position: "relative",
     flexDirection: "row",
     backgroundColor: "#fff",
@@ -113,16 +162,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: "center",
   },
-  counsellorDetails: {
+  mentorDetails: {
     marginLeft: 10,
     justifyContent: "center",
   },
-  counsellorName: {
+  mentorName: {
     fontSize: 18,
     fontWeight: "500",
     color: "#1A2042",
   },
-  counsellorStatus: {
+  mentorStatus: {
     fontSize: 13,
     fontWeight: "400",
     color: "#1A2042",

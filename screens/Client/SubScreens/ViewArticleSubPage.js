@@ -9,11 +9,12 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { ARTICLES } from "../../../components/Data/Articles";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewArticlesSubPage = () => {
+const ViewArticlesSubPage = ({ article }) => {
+  console.log(article);
   return (
     <View style={styles.container}>
       {/* Top bar */}
@@ -30,34 +31,17 @@ const ViewArticlesSubPage = () => {
         <View style={{ marginTop: 10 }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ marginBottom: 150 }}>
-              <Text style={styles.articleTitle}>
-                Would you take entrepreneurship advice from a woman?
-              </Text>
+              <Text style={styles.articleTitle}>{article.title}</Text>
               <Image
                 source={{
-                  uri: "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                  uri: article.image,
                 }}
                 style={styles.image}
               />
-              <Text style={styles.articleText}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id
-                eleifend elementum est ac tempus amet adipiscing ornare
-                sagittis. Nunc, elit laoreet risus ultricies non dui.Lorem ipsum
-                dolor sit amet, consectetur adipiscing elit. Id eleifend
-                elementum est ac tempus amet adipiscing ornare sagittis. Nunc,
-                elit laoreet risus ultricies non dui.Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Id eleifend elementum est ac tempus
-                amet adipiscing ornare sagittis. Nunc, elit laoreet risus
-                ultricies non dui.Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Id eleifend elementum est ac tempus amet
-                adipiscing ornare sagittis. Nunc, elit laoreet risus ultricies
-                non dui.
-              </Text>
-              <Text style={styles.articleAuthor}>
-                Author: Dilani Samanthika
-              </Text>
+              <Text style={styles.articleText}>{article.description}</Text>
+              <Text style={styles.articleAuthor}>Author: {article.author}</Text>
               <Text style={styles.articleCategory}>
-                Category: Mental Health
+                Category: {article.category}
               </Text>
             </View>
           </ScrollView>
