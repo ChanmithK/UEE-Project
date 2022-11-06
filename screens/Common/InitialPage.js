@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 // import FormikLogin from "./FormikLogin";
 
 const InitialPage = () => {
+  const navigation = useNavigation();
   return (
     <View>
       <LoginImage />
@@ -27,26 +29,28 @@ const InitialPage = () => {
             </Text>
             <View style={{ marginTop: 9 }}>
               <TouchableOpacity
-                // onPress={handleSubmit}
+                onPress={() => navigation.navigate("RegisterScreenUser")}
                 style={styles.buttonContainer}
               >
                 <Text style={styles.buttonText}>User</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                // onPress={handleSubmit}
+                onPress={() => navigation.navigate("RegisterScreenMentor")}
                 style={styles.buttonContainer}
               >
                 <Text style={styles.buttonText}>Mentor</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                // onPress={handleSubmit}
+                onPress={() => navigation.navigate("RegisterScreenCounsellor")}
                 style={styles.buttonContainer}
               >
                 <Text style={styles.buttonText}>Counsellor</Text>
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: "10%" }}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("LoginScreen")}
+              >
                 <Text style={styles.CreateAccount}>Login</Text>
               </TouchableOpacity>
             </View>
