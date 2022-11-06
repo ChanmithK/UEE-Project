@@ -20,7 +20,17 @@ import { useNavigation } from "@react-navigation/native";
 const ViewClientAppointmentSubPage = ({ id }) => {
   const navigation = useNavigation();
 
-  const [data, setData] = useState("");
+  const [data, setData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    time: "",
+    category: "",
+    counsellor: "",
+    mentor: "",
+    status: "",
+  });
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
@@ -30,7 +40,9 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       setData(docSnap.data());
     }
     fetchData();
-  }, []);
+  }, [id]);
+
+  const CheckStatus = data.status ? data.status : "";
 
   const deleteAppointment = () => {
     Alert.alert(
@@ -50,8 +62,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
               await deleteDoc(userDoc);
             }
 
-            deleteData();
-            navigation.navigate("BookedAppointmentsScreen");
+            deleteData().then(navigation.navigate("BookedAppointmentsScreen"));
           },
         },
       ],
@@ -84,7 +95,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                 <TextInput
                   multiline={true}
                   editable={false}
-                  defaultValue={data.status ? data.status : "No status"}
+                  defaultValue={CheckStatus ? CheckStatus : "Pending"}
                   style={[
                     styles.input,
                     { height: 40, color: "#ED6A8C", fontWeight: "bold" },
@@ -119,7 +130,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   defaultValue={data.time}
                   style={[styles.input, { height: 40 }]}
                 />
-                {data.status === "Approved" ? (
+                {CheckStatus === "Approved" ? (
                   <>
                     <Text style={styles.mainFieldName}>Session Link</Text>
                     <TextInput
@@ -132,7 +143,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                     />
                   </>
                 ) : null}
-                {data.status === "Approved" || data.status === "Declined" ? (
+                {CheckStatus === "Approved" || CheckStatus === "Declined" ? (
                   <>
                     <Text style={styles.mainFieldName}>
                       Counsellor/Mentor Note
@@ -160,7 +171,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
               // marginTop: 20,
             }}
           >
-            {data.status === "Accepted" ? (
+            {CheckStatus === "Accepted" ? (
               <TouchableOpacity
                 // onPress={handleSubmit}
                 style={{
@@ -181,7 +192,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
             ) : null}
 
             {/* Rejected Appointment */}
-            {data.status === "Declined" ? (
+            {CheckStatus === "Declined" ? (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("MakeAppointmentScreen", {
@@ -206,7 +217,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
           </View>
 
           {/* Pending Appointment */}
-          {data.status === "Pending" ? (
+          {CheckStatus === "Pending" ? (
             <View
               style={{
                 flexDirection: "row",

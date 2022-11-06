@@ -6,10 +6,12 @@ import MakeAppointmentSubPage from "./SubScreens/MakeAppointmentSubPage";
 const MakeAppointment = ({ navigation, route }) => {
   const id = route.params.id;
   const name = route.params.name;
+  const role = route.params.role;
+  const image = route.params.image;
 
   return (
     <SafeAreaView style={styles.container}>
-      <MakeAppointmentSubPage id={id} name={name} />
+      <MakeAppointmentSubPage id={id} name={name} role={role} image={image} />
     </SafeAreaView>
   );
 };

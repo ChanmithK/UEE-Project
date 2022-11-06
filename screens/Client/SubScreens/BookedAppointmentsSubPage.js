@@ -51,7 +51,7 @@ const BookedAppointments = () => {
       );
     };
     getAppointments();
-  }, []);
+  }, [appointmentList]);
 
   const searchAppointments = (text) => {
     setSearchKey(text);
@@ -112,10 +112,22 @@ const AppointmentList = ({ searchResult }) => {
           key={index}
         >
           <View style={styles.appointmentContainer} key={index}>
-            <Image source={{ uri: appointment.image }} style={styles.image} />
+            <Image
+              source={{ uri: appointment.counsellorImage }}
+              style={styles.image}
+            />
             <View style={styles.appointmentDetails}>
               <Text style={styles.appointmentName}>
                 {appointment.counsellorName}
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "500",
+                  color: "#ED6A8C",
+                  marginBottom: -2,
+                }}
+              >
+                {appointment.person}{" "}
               </Text>
               <View style={{ flexDirection: "row", marginTop: 5 }}>
                 <Text style={styles.appointmentDate}>{appointment.date} </Text>

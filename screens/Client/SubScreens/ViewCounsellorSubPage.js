@@ -174,6 +174,8 @@ const ViewCounsellorSubPage = ({ id }) => {
                 navigation.navigate("MakeAppointmentScreen", {
                   id: id,
                   name: data.name,
+                  role: data.role,
+                  image: data.image,
                 });
               }
             }

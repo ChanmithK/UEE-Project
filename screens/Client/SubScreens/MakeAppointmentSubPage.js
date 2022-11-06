@@ -19,7 +19,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const MakeAppointmentSubPage = ({ id, name }) => {
+const MakeAppointmentSubPage = ({ id, name, role, image }) => {
   const navigation = useNavigation();
 
   const windowHeight = Dimensions.get("window").height;
@@ -110,6 +110,8 @@ const MakeAppointmentSubPage = ({ id, name }) => {
       description: description,
       title: title,
       status: "Pending",
+      person: role,
+      counsellorImage: image,
     })
       .then(navigation.navigate("BookedAppointmentsScreen"))
       .catch((error) => {
