@@ -1,27 +1,39 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+
 export const bottomTabIcons = [
   {
     name: "Message",
     active: "https://img.icons8.com/ios/50/ED6A8C/topic.png",
     inactive: "https://img.icons8.com/ios/50/000000/topic.png",
+    page: "Message",
   },
   {
     name: "Home",
     active: "https://img.icons8.com/ios/50/ED6A8C/home--v1.png",
     inactive: "https://img.icons8.com/ios/50/000000/home--v1.png",
+    page: "ClientHomeScreen",
   },
   {
     name: "Dashboard",
-    active: "https://img.icons8.com/ios-filled/344/instagram-reel.png",
-    inactive: "https://img.icons8.com/ios/344/instagram-reel.png",
+    active: "https://img.icons8.com/ios/50/ED6A8C/windows-11.png",
+    inactive: "https://img.icons8.com/ios/50/000000/windows-11.png",
+    page: "MenuScreen",
   },
 ];
 const BottomTabs = ({ icons }) => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Home");
+
   const Icon = ({ icon }) => (
-    <TouchableOpacity onPress={() => setActiveTab(icon.name)}>
+    <TouchableOpacity
+      onPress={() => {
+        setActiveTab(icon.name);
+        navigation.navigate(icon.page);
+      }}
+    >
       <Image
         source={{ uri: activeTab === icon.name ? icon.active : icon.inactive }}
         style={style.icon}

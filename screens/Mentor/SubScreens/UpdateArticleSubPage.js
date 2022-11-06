@@ -33,9 +33,9 @@ const UpdateArticleSubPage = () => {
     fetchData();
     setTitle(data.title);
     setDescription(data.description);
-    setCategory(data.category);
+    setCategory(data.position);
     setHashTags(data.hashTags);
-  }, [data.title, data.description, data.category, data.hashTags]);
+  }, [data.title, data.description, data.position, data.hashTags]);
 
   const updateProfile = () => {
     const userDoc = doc(db, "Articles", "0Zfiv61f4dbClMrkJDqO");
@@ -97,7 +97,7 @@ const UpdateArticleSubPage = () => {
                 <Text style={styles.mainFieldName}>Category</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.category}
+                  defaultValue={data.position}
                   style={[styles.input, { height: 40 }]}
                   onChangeText={(text) => setCategory(text)}
                 />

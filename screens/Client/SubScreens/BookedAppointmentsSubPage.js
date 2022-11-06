@@ -21,6 +21,7 @@ import { db } from "../../../firebase";
 import { APPOINTMENTS } from "../../../components/Data/Appointments";
 import { TouchableOpacity } from "react-native-gesture-handler";
 const { useNavigation } = require("@react-navigation/native");
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BookedAppointments = () => {
   const windowHeight = Dimensions.get("window").height;
@@ -33,10 +34,13 @@ const BookedAppointments = () => {
 
   useEffect(() => {
     const getAppointments = async () => {
+      const value = await AsyncStorage.getItem("UserID");
+      const user = JSON.parse(value);
+
       const appointments = await getDocs(
         query(
           collection(db, "CounsellorAppointments"),
-          where("userId", "==", "kkh04HnoCIVv7kbnkXYL")
+          where("userId", "==", user)
         )
       );
       setAppointmentList(
@@ -110,7 +114,9 @@ const AppointmentList = ({ searchResult }) => {
           <View style={styles.appointmentContainer} key={index}>
             <Image source={{ uri: appointment.image }} style={styles.image} />
             <View style={styles.appointmentDetails}>
-              <Text style={styles.appointmentName}>{appointment.name}</Text>
+              <Text style={styles.appointmentName}>
+                {appointment.counsellorName}
+              </Text>
               <View style={{ flexDirection: "row", marginTop: 5 }}>
                 <Text style={styles.appointmentDate}>{appointment.date} </Text>
                 <Text style={styles.appointmentTime}> {appointment.time}</Text>

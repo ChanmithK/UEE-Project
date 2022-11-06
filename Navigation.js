@@ -25,6 +25,7 @@ import InitialPage from "./screens/Common/InitialPage";
 import RegisterScreenUser from "./screens/RegisterScreenUser";
 import RegisterCounsellor from "./screens/RegisterCounsellor";
 import RegisterMentor from "./screens/RegisterMentor";
+import MenuScreen from "./components/Client/Menu";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -49,6 +50,7 @@ const SignedInStack = () => {
 
         {/* Client Screens */}
         <Stack.Screen name="ClientHomeScreen" component={ClientHomeScreen} />
+        <Stack.Screen name="MenuScreen" component={MenuScreen} />
         <Stack.Screen
           name="BookedAppointmentsScreen"
           component={ClientBookedAppointmentsScreen}

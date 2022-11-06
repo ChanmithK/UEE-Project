@@ -168,7 +168,7 @@ const UpdateAppointmentSubPage = ({ data, id }) => {
                     />
                     <Image
                       source={{
-                        uri: "https://img.icons8.com/material-outlined/24/000000/calendar-11.png",
+                        uri: "https://img.icons8.com/ios/50/null/calendar-30.png",
                       }}
                       style={{
                         height: 30,
@@ -197,7 +197,7 @@ const UpdateAppointmentSubPage = ({ data, id }) => {
                     />
                     <Image
                       source={{
-                        uri: "https://img.icons8.com/windows/32/000000/retro-alarm-clock.png",
+                        uri: "https://img.icons8.com/ios/50/null/time--v1.png",
                       }}
                       style={{
                         height: 30,
