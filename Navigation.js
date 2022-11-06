@@ -23,6 +23,8 @@ import UpdateArticle from "./screens/Mentor/UpdateArticle";
 import UpdateAppointment from "./screens/Client/UpdateAppointment";
 import InitialPage from "./screens/Common/InitialPage";
 import RegisterScreenUser from "./screens/RegisterScreenUser";
+import RegisterCounsellor from "./screens/RegisterCounsellor";
+import RegisterMentor from "./screens/RegisterMentor";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -30,16 +32,20 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="LoginScreen"
+        initialRouteName="InitialPageScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="InitialPageScreen" component={InitialPage} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        {/* <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> */}
         <Stack.Screen
           name="RegisterScreenUser"
           component={RegisterScreenUser}
         />
+        <Stack.Screen
+          name="RegisterScreenCounsellor"
+          component={RegisterCounsellor}
+        />
+        <Stack.Screen name="RegisterScreenMentor" component={RegisterMentor} />
 
         {/* Client Screens */}
         <Stack.Screen name="ClientHomeScreen" component={ClientHomeScreen} />
