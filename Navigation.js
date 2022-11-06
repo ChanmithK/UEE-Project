@@ -26,6 +26,7 @@ import RegisterScreenUser from "./screens/RegisterScreenUser";
 import RegisterCounsellor from "./screens/RegisterCounsellor";
 import RegisterMentor from "./screens/RegisterMentor";
 import MenuScreen from "./components/Client/Menu";
+import CounsellorMenu from "./components/Counsellor/CounsellorMenu";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -93,7 +94,7 @@ const SignedInStack = () => {
           name="CounsellorProfileUpdateScreen"
           component={CounsellorProfileUpdate}
         />
-
+        <Stack.Screen name="CounsellorMenuScreen" component={CounsellorMenu} />
         {/* Mentor */}
         <Stack.Screen name="CreateArticleScreen" component={CreateArticle} />
         <Stack.Screen
