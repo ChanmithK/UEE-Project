@@ -94,9 +94,6 @@ const MakeAppointmentSubPage = ({ id, name, role, image }) => {
     const docSnap = await getDoc(userDoc);
     const client = docSnap.data();
 
-    // const getAge = new Date().getFullYear() - client.dob.split("/")[2];
-    // console.log(getAge);
-
     addDoc(appointmentCollectionRef, {
       counsellorId: id,
       counsellorName: name,

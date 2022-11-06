@@ -33,7 +33,6 @@ const FormikLogin = () => {
           // Signed in
           const user = userCredential.user;
           const usersCollectionRef = collection(db, "Users");
-          // console.log("user", user);
           const getUsers = async () => {
             const filterdData = query(
               usersCollectionRef,

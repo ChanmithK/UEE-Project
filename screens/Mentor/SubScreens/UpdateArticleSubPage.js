@@ -15,8 +15,11 @@ import TopBar from "../../../components/Common/TopBar";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
-const UpdateArticleSubPage = () => {
+const UpdateArticleSubPage = ({ id }) => {
+  const navigation = useNavigation();
+
   const [data, setData] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,26 +29,26 @@ const UpdateArticleSubPage = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Articles", "0Zfiv61f4dbClMrkJDqO");
+      const userDoc = doc(db, "Articles", id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
     fetchData();
     setTitle(data.title);
     setDescription(data.description);
-    setCategory(data.position);
+    setCategory(data.category);
     setHashTags(data.hashTags);
-  }, [data.title, data.description, data.position, data.hashTags]);
+  }, [data.title, data.description, data.category, data.hashTags]);
 
   const updateProfile = () => {
-    const userDoc = doc(db, "Articles", "0Zfiv61f4dbClMrkJDqO");
+    const userDoc = doc(db, "Articles", id);
     updateDoc(userDoc, {
       title: title,
       description: description,
       category: category,
       hashTags: hashTags,
     });
-    Alert.alert("Profile Updated");
+    navigation.navigate("ViewCreatedArticlesScreen");
   };
 
   return (
@@ -97,7 +100,7 @@ const UpdateArticleSubPage = () => {
                 <Text style={styles.mainFieldName}>Category</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.position}
+                  defaultValue={data.category}
                   style={[styles.input, { height: 40 }]}
                   onChangeText={(text) => setCategory(text)}
                 />

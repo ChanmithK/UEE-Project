@@ -36,17 +36,6 @@ const FormikRegister = () => {
   const [selectedValue, setSelectedValue] = useState("");
 
   const createUser = async (values) => {
-    // try {
-    //   const docRef = await addDoc(usersCollectionRef, {
-    //     ...values,
-    //     position: selectedValue,
-    //   });
-    //   console.log("Document written with ID: ", docRef.id);
-    // } catch (e) {
-    //   console.error("Error adding document: ", e);
-    // }
-    // alert("User Created", values);
-    console.log("Values", values);
   };
 
   return (
@@ -62,8 +51,6 @@ const FormikRegister = () => {
       }}
       onSubmit={(values) => {
         createUser(values);
-        // console.log("Values", values);
-        // navigation.goBack();
       }}
       validationSchema={RegisterSchema}
       validateOnMount={false}

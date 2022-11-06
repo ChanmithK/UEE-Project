@@ -45,16 +45,13 @@ const FormikRegister = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log("user bn", user);
-          // ...
+         
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          // ..
         });
 
-      // console.log("Logged in successfully", email, password);
     } catch (error) {
       console.log("Error logging in: ", error);
     }
@@ -80,8 +77,7 @@ const FormikRegister = () => {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-    // alert("User Created", values.email);
-    // console.log("Values", values);
+    
   };
 
   return (
@@ -98,8 +94,6 @@ const FormikRegister = () => {
       }}
       onSubmit={(values) => {
         createUser(values);
-        // console.log("Values", values);
-        // navigation.goBack();
       }}
       validationSchema={RegisterSchema}
       validateOnMount={false}

@@ -16,19 +16,22 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const CounsellorProfileUpdateSubPage = () => {
+  const navigation = useNavigation();
+  const [id, setId] = useState("");
   const [data, setData] = useState("");
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
+  const [age, setAge] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
     async function fetchData() {
       const value = await AsyncStorage.getItem("UserID");
       const user = JSON.parse(value);
+      setId(user);
 
       const userDoc = doc(db, "Users", user);
       const docSnap = await getDoc(userDoc);
@@ -37,19 +40,16 @@ const CounsellorProfileUpdateSubPage = () => {
     fetchData();
     setName(data.name);
     setBio(data.bio);
-    setDob(data.dob);
-    setSex(data.sex);
-  }, [data.name, data.bio, data.dob, data.sex]);
+    setAge(data.age);
+  }, [data.name, data.bio, data.age]);
 
   const updateProfile = () => {
-    const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+    const userDoc = doc(db, "Users", id);
     updateDoc(userDoc, {
       name: name,
       bio: bio,
-      dob: dob,
-      sex: sex,
-    });
-    Alert.alert("Profile Updated");
+      age: age,
+    }).then(() => navigation.navigate("CounsellorProfileScreen"));
   };
 
   return (
@@ -98,20 +98,20 @@ const CounsellorProfileUpdateSubPage = () => {
                   style={[styles.input, { height: 145 }]}
                   onChangeText={(text) => setBio(text)}
                 />
-                <Text style={styles.mainFieldName}>Date of birth</Text>
+                <Text style={styles.mainFieldName}>Age</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.dob}
+                  defaultValue={data.age}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setDob(text)}
+                  onChangeText={(text) => setAge(text)}
                 />
-                <Text style={styles.mainFieldName}>Sex</Text>
+                {/* <Text style={styles.mainFieldName}>Sex</Text>
                 <TextInput
                   multiline={true}
                   defaultValue={data.sex}
                   style={[styles.input, { height: 40 }]}
                   onChangeText={(text) => setSex(text)}
-                />
+                /> */}
               </View>
             </ScrollView>
           </View>
