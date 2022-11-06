@@ -64,14 +64,18 @@ const FormikRegister = () => {
       const user = auth.currentUser;
       const docRef = await addDoc(usersCollectionRef, {
         email: values.email,
-        fullName: values.fullName,
+        name: values.fullName,
         age: values.age,
         userId: user.uid,
+        sex: "Female",
         role: "Mentor",
+        sessions: 0,
         workingTimeFrom: values.workingTimeFrom,
         workingTimeTo: values.workingTimeTo,
         bio: values.bio,
         position: values.position,
+        image:
+          "https://images.pexels.com/photos/1024311/pexels-photo-1024311.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       });
       console.log("Document written with ID: ", docRef);
     } catch (e) {
@@ -86,12 +90,14 @@ const FormikRegister = () => {
       initialValues={{
         email: "",
         password: "",
-        fullName: "",
+        name: "",
         age: "",
         bio: "",
         position: "",
         workingTimeFrom: "",
         workingTimeTo: "",
+        image:
+          "https://images.pexels.com/photos/1024311/pexels-photo-1024311.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
         // Repassword: "",
       }}
       onSubmit={(values) => {
