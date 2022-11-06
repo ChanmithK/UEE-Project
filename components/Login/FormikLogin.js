@@ -50,6 +50,8 @@ const FormikLogin = () => {
 
             if (userData[0].role === "User") {
               navigation.navigate("ClientHomeScreen");
+            } else {
+              navigation.navigate("AppointmentListScreen");
             }
           };
           getUsers();

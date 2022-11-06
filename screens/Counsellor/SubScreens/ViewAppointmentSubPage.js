@@ -23,14 +23,16 @@ import {
 import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewAppointmentSubPage = () => {
+const ViewAppointmentSubPage = (id) => {
+  const navigation = useNavigation();
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "CounsellorAppointments", "b0ehYF0bai99EHFjwzxz");
+      const userDoc = doc(db, "CounsellorAppointments", id.id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
@@ -49,31 +51,30 @@ const ViewAppointmentSubPage = () => {
     setDeclineModalVisible(!isDeclineModalVisible);
   };
 
-  const acceptAppointment = () => {
-    const appointmentDoc = doc(
-      db,
-      "CounsellorAppointments",
-      "b0ehYF0bai99EHFjwzxz"
-    );
+  const acceptAppointment = async () => {
+    const appointmentDoc = doc(db, "CounsellorAppointments", id.id);
     updateDoc(appointmentDoc, {
       status: "Accepted",
       sessionUrl: sessionUrl,
       note: note,
-      //   age: 23,
     });
+
+    const userDoc = doc(db, "Users", data.userId);
+    const docSnap = await getDoc(userDoc);
+    console.log(docSnap.data().sessions);
+    updateDoc(userDoc, {
+      sessions: docSnap.data().sessions + 1,
+    });
+    navigation.navigate("AppointmentListScreen");
   };
 
   const declineAppointment = () => {
-    const appointmentDoc = doc(
-      db,
-      "CounsellorAppointments",
-      "b0ehYF0bai99EHFjwzxz"
-    );
+    const appointmentDoc = doc(db, "CounsellorAppointments", id);
     updateDoc(appointmentDoc, {
       status: "Declined",
       note: note,
-      //   age: 23,
     });
+    navigation.navigate("AppointmentListScreen");
   };
 
   return (
@@ -157,9 +158,6 @@ const ViewAppointmentSubPage = () => {
                     multiline={true}
                     style={[styles.input, { height: 100 }]}
                     onChangeText={(text) => setNote(text)}
-
-                    // onChangeText={handleChange("bio")}
-                    // value={values.bio}
                   />
                   <View
                     style={{

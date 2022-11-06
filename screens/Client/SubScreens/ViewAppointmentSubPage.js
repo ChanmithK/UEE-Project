@@ -33,7 +33,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
   }, []);
 
   const deleteAppointment = () => {
-    console.log(id);
     Alert.alert(
       "Delete Appointment",
       "Are you sure you want to delete this appointment?",
