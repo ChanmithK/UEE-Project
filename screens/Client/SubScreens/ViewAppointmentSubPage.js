@@ -45,7 +45,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
   const CheckStatus = data.status ? data.status : "";
 
   const deleteAppointment = () => {
-    console.log(id);
     Alert.alert(
       "Delete Appointment",
       "Are you sure you want to delete this appointment?",

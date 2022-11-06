@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const bottomTabIcons = [
   {
@@ -20,18 +21,22 @@ export const bottomTabIcons = [
     name: "Dashboard",
     active: "https://img.icons8.com/ios/50/ED6A8C/windows-11.png",
     inactive: "https://img.icons8.com/ios/50/000000/windows-11.png",
-    page: "MenuScreen",
+    page: ["MenuScreen", "CounsellorMenuScreen"],
   },
 ];
 const BottomTabs = ({ icons }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Home");
 
+  // const value = AsyncStorage.getItem("UserRole");
+  // const user = value.split('"')[1];
   const Icon = ({ icon }) => (
     <TouchableOpacity
       onPress={() => {
         setActiveTab(icon.name);
-        navigation.navigate(icon.page);
+        // user === "User"
+        // ? navigation.navigate(icon.page[0])
+        navigation.navigate(icon.page[1]);
       }}
     >
       <Image
