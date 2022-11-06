@@ -15,15 +15,20 @@ import { ARTICLES } from "../../../components/Data/Articles";
 import { db } from "../../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewCreatedArticlesSubPage = () => {
+  const navigation = useNavigation();
   const articleCollectionRef = collection(db, "Articles");
   const [articles, setArticles] = useState([]);
   useEffect(() => {
     const getAtricles = async () => {
+      const value = await AsyncStorage.getItem("UserID");
+      const user = JSON.parse(value);
       const filterdData = query(
         articleCollectionRef,
-        where("authorId", "==", "12345")
+        where("authorID", "==", user)
       );
       const querySnapshot = await getDocs(filterdData);
 
@@ -32,9 +37,7 @@ const ViewCreatedArticlesSubPage = () => {
       );
     };
     getAtricles();
-  }, []);
-
-  console.log("Articlessssss", articles);
+  }, [articles]);
 
   return (
     <View style={styles.container}>
@@ -70,7 +73,11 @@ const ViewCreatedArticlesSubPage = () => {
             <View style={{ marginBottom: 250 }}>
               {articles.map((article, index) => (
                 <View key={index}>
-                  <TouchableOpacity onPress={() => Alert.alert(article.title)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ViewCreatedArticleScreen", {id: article.id})
+                    }
+                  >
                     <View style={styles.articleContainer}>
                       <Image
                         source={{ uri: article.image }}

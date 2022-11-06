@@ -95,9 +95,7 @@ const UpdateAppointmentSubPage = ({ data, id }) => {
         time: newtime,
       });
       Alert.alert("Appointment Updated");
-      navigation.navigate("ViewClientAppointmentScreen", {
-        id: id,
-      });
+      navigation.navigate("BookedAppointmentsScreen");
     }
   };
 

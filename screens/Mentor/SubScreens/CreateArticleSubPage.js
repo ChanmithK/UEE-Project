@@ -18,8 +18,11 @@ import { db } from "../../../firebase";
 import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { addDoc, collection } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const CreateArticleSubPage = () => {
+  const navigation = useNavigation();
   const windowHeight = Dimensions.get("window").height;
   const articleCollectionRef = collection(db, "Articles");
 
@@ -28,11 +31,22 @@ const CreateArticleSubPage = () => {
   const [category, setCategory] = useState("");
   const [hashTags, setHashTags] = useState("");
 
+  const [user, setUser] = useState("");
+
+  useEffect(() => {
+    const getAppointments = async () => {
+      const value = await AsyncStorage.getItem("UserData");
+      const user = JSON.parse(value);
+      setUser(user);
+    };
+
+    getAppointments();
+  }, []);
+
   const createArticle = async () => {
     addDoc(articleCollectionRef, {
-      id: "112211",
-      authorID: "123456",
-      author: "Kamal Perera",
+      authorID: user.id,
+      author: user.name,
       image:
         "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       title: title,
@@ -41,7 +55,7 @@ const CreateArticleSubPage = () => {
       hashTags: hashTags,
     })
       .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
+        navigation.navigate("ViewCreatedArticlesScreen");
       })
       .catch((error) => {
         console.error("Error adding document: ", error);

@@ -11,12 +11,13 @@ import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewCreatedArticleSubPage = () => {
+const ViewCreatedArticleSubPage = ({ id }) => {
+  const navigation = useNavigation();
   const height = Dimensions.get("window").height;
-  const articleId = "0Zfiv61f4dbClMrkJDqO";
   const [article, setArticle] = React.useState([]);
-  const docRef = doc(db, "Articles", articleId);
+  const docRef = doc(db, "Articles", id);
 
   useEffect(() => {
     const getAtricles = async () => {
@@ -31,18 +32,11 @@ const ViewCreatedArticleSubPage = () => {
   }, []);
 
   const deleteArticle = () => {
-    const articleDoc = doc(db, "Articles", articleId);
+    const articleDoc = doc(db, "Articles", id);
     deleteDoc(articleDoc);
 
-    // const storage = getStorage();
-    // const imageRef = ref(storage, `images/${data.image}`);
-    // // Delete the file
-    // deleteObject(imageRef).catch((error) => {
-    //   // Uh-oh, an error occurred!
-    // });
+    navigation.navigate("ViewCreatedArticlesScreen");
   };
-
-  //   console.log(article);
 
   return (
     <View style={styles.container}>
@@ -123,7 +117,11 @@ const ViewCreatedArticleSubPage = () => {
               marginTop: 20,
               marginBottom: 10,
             }}
-            // onPress={acceptAppointment}
+            onPress={() =>
+              navigation.navigate("UpdateArticleScreen", {
+                id: id,
+              })
+            }
           >
             <Text style={styles.buttonText}>Edit</Text>
           </TouchableOpacity>

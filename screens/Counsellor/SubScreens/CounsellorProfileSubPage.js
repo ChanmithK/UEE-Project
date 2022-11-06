@@ -23,58 +23,25 @@ import {
 import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const CounsellorProfileSubPage = () => {
+  const navigation = useNavigation();
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+      const value = await AsyncStorage.getItem("UserID");
+      const user = JSON.parse(value);
+
+      const userDoc = doc(db, "Users", user);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
     fetchData();
-  }, []);
-  const [isAcceptModalVisible, setAcceptModalVisible] = useState(false);
-  const [isDeclineModalVisible, setDeclineModalVisible] = useState(false);
-  const [note, setNote] = useState("");
-  const [sessionUrl, setSessionUrl] = useState("");
-
-  const toggleAcceptModal = () => {
-    setAcceptModalVisible(!isAcceptModalVisible);
-  };
-
-  const toggleDeclineModal = () => {
-    setDeclineModalVisible(!isDeclineModalVisible);
-  };
-
-  const acceptAppointment = () => {
-    const appointmentDoc = doc(
-      db,
-      "CounsellorAppointments",
-      "b0ehYF0bai99EHFjwzxz"
-    );
-    updateDoc(appointmentDoc, {
-      status: "Accepted",
-      sessionUrl: sessionUrl,
-      note: note,
-      //   age: 23,
-    });
-  };
-
-  const declineAppointment = () => {
-    const appointmentDoc = doc(
-      db,
-      "CounsellorAppointments",
-      "b0ehYF0bai99EHFjwzxz"
-    );
-    updateDoc(appointmentDoc, {
-      status: "Declined",
-      note: note,
-      //   age: 23,
-    });
-  };
+  }, [data]);
 
   return (
     <View style={styles.container}>
@@ -110,14 +77,14 @@ const CounsellorProfileSubPage = () => {
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
               >
-                Certified counsellor
+                {data.position}
               </Text>
             </View>
             <View style={{ marginLeft: 8 }}>
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "500" }}
               >
-                25 sessions
+                {data.sessions} sessions
               </Text>
             </View>
           </View>
@@ -131,8 +98,8 @@ const CounsellorProfileSubPage = () => {
               <Text style={styles.fieldData}>{data.bio}</Text>
               <Text style={styles.mainFieldName}>Email</Text>
               <Text style={styles.fieldData}>{data.email}</Text>
-              <Text style={styles.mainFieldName}>Date of birth</Text>
-              <Text style={styles.fieldData}>{data.dob}</Text>
+              <Text style={styles.mainFieldName}>Age</Text>
+              <Text style={styles.fieldData}>{data.age}</Text>
               <Text style={styles.mainFieldName}>Sex</Text>
               <Text style={styles.fieldData}>{data.sex}</Text>
             </View>
@@ -150,7 +117,6 @@ const CounsellorProfileSubPage = () => {
           }}
         >
           <TouchableOpacity
-            // onPress={handleSubmit}
             style={{
               backgroundColor: "#ED6A8C",
               width: "100%",
@@ -162,7 +128,7 @@ const CounsellorProfileSubPage = () => {
               marginTop: 30,
               //   marginHorizontal: 0,
             }}
-            onPress={toggleDeclineModal}
+            onPress={() => navigation.navigate("CounsellorProfileUpdateScreen")}
           >
             <Text style={styles.buttonText}>Edit</Text>
           </TouchableOpacity>

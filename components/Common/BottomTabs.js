@@ -3,6 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export const bottomTabIcons = [
   {
@@ -27,16 +28,23 @@ export const bottomTabIcons = [
 const BottomTabs = ({ icons }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Home");
+  const [role, setRole] = useState("");
 
-  // const value = AsyncStorage.getItem("UserRole");
-  // const user = value.split('"')[1];
+  const getAppointments = async () => {
+    const value = await AsyncStorage.getItem("UserRole");
+    const user = JSON.parse(value);
+    setRole(user);
+  };
+
+  getAppointments();
+
   const Icon = ({ icon }) => (
     <TouchableOpacity
       onPress={() => {
         setActiveTab(icon.name);
-        // user === "User"
-        // ? navigation.navigate(icon.page[0])
-        navigation.navigate(icon.page[1]);
+        role === "User"
+          ? navigation.navigate(icon.page[0])
+          : navigation.navigate(icon.page[1]);
       }}
     >
       <Image

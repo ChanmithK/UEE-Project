@@ -3,10 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import UpdateArticleSubPage from "./SubScreens/UpdateArticleSubPage";
 
-const UpdateArticle = () => {
+const UpdateArticle = ({ navigation, route }) => {
+  const id = route.params.id;
+
   return (
     <SafeAreaView style={styles.container}>
-      <UpdateArticleSubPage />
+      <UpdateArticleSubPage id={id} />
     </SafeAreaView>
   );
 };

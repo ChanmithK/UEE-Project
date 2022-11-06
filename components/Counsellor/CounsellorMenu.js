@@ -23,27 +23,31 @@ const CounsellorMenu = () => {
       <TopBar title={"Menu"} />
 
       <View style={styles.view}>
-        <TouchableOpacity onPress={() => navigation.navigate("")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CounsellorProfileScreen")}
+        >
           <Text style={styles.text}>Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("BookedAppointmentsScreen")}
+          onPress={() => navigation.navigate("AppointmentListScreen")}
         >
           <Text style={styles.text}>Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ViewMentorsScreen")}
+          onPress={() => navigation.navigate("AppointmentHistoryListScreen")}
         >
           <Text style={styles.text}>Appointment History</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("ViewArticlesScreen")}
+          onPress={() => navigation.navigate("ViewCreatedArticlesScreen")}
         >
-          <Text style={styles.text}>Articles</Text>
+          <Text style={styles.text}>My Articles</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("")}>
-          <Text style={styles.text}>Saved</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CreateArticleScreen")}
+        >
+          <Text style={styles.text}>Publish Article</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.SignOutView}>

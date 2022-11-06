@@ -61,7 +61,6 @@ const ViewAppointmentSubPage = (id) => {
 
     const userDoc = doc(db, "Users", data.userId);
     const docSnap = await getDoc(userDoc);
-    console.log(docSnap.data().sessions);
     updateDoc(userDoc, {
       sessions: docSnap.data().sessions + 1,
     });
