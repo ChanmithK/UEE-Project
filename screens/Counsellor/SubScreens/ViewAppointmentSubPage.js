@@ -347,7 +347,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: "600",
     textAlign: "center",
   },
   input: {
@@ -369,11 +370,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 15,
-    textAlign: "center",
   },
 });
 

@@ -16,34 +16,34 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 
-const CounsellorProfileUpdateSubPage = () => {
+const UpdateArticleSubPage = () => {
   const [data, setData] = useState("");
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [hashTags, setHashTags] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
     async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+      const userDoc = doc(db, "Articles", "0Zfiv61f4dbClMrkJDqO");
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
     }
     fetchData();
-    setName(data.name);
-    setBio(data.bio);
-    setDob(data.dob);
-    setSex(data.sex);
-  }, [data.name, data.bio, data.dob, data.sex]);
+    setTitle(data.title);
+    setDescription(data.description);
+    setCategory(data.category);
+    setHashTags(data.hashTags);
+  }, [data.title, data.description, data.category, data.hashTags]);
 
   const updateProfile = () => {
-    const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
+    const userDoc = doc(db, "Articles", "0Zfiv61f4dbClMrkJDqO");
     updateDoc(userDoc, {
-      name: name,
-      bio: bio,
-      dob: dob,
-      sex: sex,
+      title: title,
+      description: description,
+      category: category,
+      hashTags: hashTags,
     });
     Alert.alert("Profile Updated");
   };
@@ -56,7 +56,7 @@ const CounsellorProfileUpdateSubPage = () => {
         enabled
       >
         {/* Top bar */}
-        <TopBar title={"Edit Profile"} />
+        <TopBar title={"Edit Article"} />
 
         {/* Content */}
         <View
@@ -66,47 +66,47 @@ const CounsellorProfileUpdateSubPage = () => {
           }}
         >
           {/* Header Part */}
-          <View>
-            <Image
-              source={{
-                uri: data.image,
-              }}
-              style={styles.userImage}
-            />
-          </View>
 
           {/* Field data */}
-          <View style={{ maxHeight: 400 }}>
+          <View style={{ maxHeight: 550 }}>
             <ScrollView>
               <View>
-                <Text style={styles.mainFieldName}>Name</Text>
+                <Image
+                  source={{
+                    uri: data.image,
+                  }}
+                  style={styles.userImage}
+                />
+              </View>
+              <View>
+                <Text style={styles.mainFieldName}>Title</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.name}
+                  defaultValue={data.title}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setName(text)}
+                  onChangeText={(text) => setTitle(text)}
                 />
-                <Text style={styles.mainFieldName}>Bio</Text>
+                <Text style={styles.mainFieldName}>Description</Text>
                 <TextInput
                   placeholderTextColor="white"
                   multiline={true}
-                  defaultValue={data.bio}
+                  defaultValue={data.description}
                   style={[styles.input, { height: 145 }]}
-                  onChangeText={(text) => setBio(text)}
+                  onChangeText={(text) => setDescription(text)}
                 />
-                <Text style={styles.mainFieldName}>Date of birth</Text>
+                <Text style={styles.mainFieldName}>Category</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.dob}
+                  defaultValue={data.category}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setDob(text)}
+                  onChangeText={(text) => setCategory(text)}
                 />
-                <Text style={styles.mainFieldName}>Sex</Text>
+                <Text style={styles.mainFieldName}>HashTags</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.sex}
+                  defaultValue={data.hashTags}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setSex(text)}
+                  onChangeText={(text) => setHashTags(text)}
                 />
               </View>
             </ScrollView>
@@ -153,9 +153,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   userImage: {
-    width: 149,
-    height: 149,
-    borderRadius: 100,
+    width: "100%",
+    height: 190,
+    borderRadius: 10,
     alignSelf: "center",
   },
   mainFieldName: {
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CounsellorProfileUpdateSubPage;
+export default UpdateArticleSubPage;

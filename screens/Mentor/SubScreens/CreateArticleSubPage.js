@@ -9,43 +9,43 @@ import {
   TextInput,
   Alert,
   KeyboardAvoidingView,
+  Button,
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { addDoc, collection } from "firebase/firestore";
 
-const CounsellorProfileUpdateSubPage = () => {
-  const [data, setData] = useState("");
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
+const CreateArticleSubPage = () => {
   const windowHeight = Dimensions.get("window").height;
+  const articleCollectionRef = collection(db, "Articles");
 
-  useEffect(() => {
-    async function fetchData() {
-      const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
-      const docSnap = await getDoc(userDoc);
-      setData(docSnap.data());
-    }
-    fetchData();
-    setName(data.name);
-    setBio(data.bio);
-    setDob(data.dob);
-    setSex(data.sex);
-  }, [data.name, data.bio, data.dob, data.sex]);
+  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [hashTags, setHashTags] = useState("");
 
-  const updateProfile = () => {
-    const userDoc = doc(db, "Users", "kkh04HnoCIVv7kbnkXYL");
-    updateDoc(userDoc, {
-      name: name,
-      bio: bio,
-      dob: dob,
-      sex: sex,
-    });
-    Alert.alert("Profile Updated");
+  const createArticle = async () => {
+    addDoc(articleCollectionRef, {
+      id: "112211",
+      authorID: "123456",
+      author: "Kamal Perera",
+      image:
+        "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      title: title,
+      description: description,
+      category: category,
+      hashTags: hashTags,
+    })
+      .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
   };
 
   return (
@@ -56,7 +56,7 @@ const CounsellorProfileUpdateSubPage = () => {
         enabled
       >
         {/* Top bar */}
-        <TopBar title={"Edit Profile"} />
+        <TopBar title={"Create Article"} />
 
         {/* Content */}
         <View
@@ -65,48 +65,34 @@ const CounsellorProfileUpdateSubPage = () => {
             marginVertical: 30,
           }}
         >
-          {/* Header Part */}
-          <View>
-            <Image
-              source={{
-                uri: data.image,
-              }}
-              style={styles.userImage}
-            />
-          </View>
-
           {/* Field data */}
-          <View style={{ maxHeight: 400 }}>
+          <View>
             <ScrollView>
               <View>
-                <Text style={styles.mainFieldName}>Name</Text>
+                <Text style={styles.mainFieldName}>Title</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.name}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setName(text)}
+                  onChangeText={(text) => setTitle(text)}
                 />
-                <Text style={styles.mainFieldName}>Bio</Text>
+                <Text style={styles.mainFieldName}>Category</Text>
+                <TextInput
+                  multiline={true}
+                  style={[styles.input, { height: 40 }]}
+                  onChangeText={(text) => setCategory(text)}
+                />
+                <Text style={styles.mainFieldName}>Description</Text>
                 <TextInput
                   placeholderTextColor="white"
                   multiline={true}
-                  defaultValue={data.bio}
                   style={[styles.input, { height: 145 }]}
-                  onChangeText={(text) => setBio(text)}
+                  onChangeText={(text) => setDescription(text)}
                 />
-                <Text style={styles.mainFieldName}>Date of birth</Text>
+                <Text style={styles.mainFieldName}>HashTags</Text>
                 <TextInput
                   multiline={true}
-                  defaultValue={data.dob}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setDob(text)}
-                />
-                <Text style={styles.mainFieldName}>Sex</Text>
-                <TextInput
-                  multiline={true}
-                  defaultValue={data.sex}
-                  style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setSex(text)}
+                  onChangeText={(text) => setHashTags(text)}
                 />
               </View>
             </ScrollView>
@@ -135,9 +121,9 @@ const CounsellorProfileUpdateSubPage = () => {
                 marginTop: 30,
                 //   marginHorizontal: 0,
               }}
-              onPress={updateProfile}
+              onPress={createArticle}
             >
-              <Text style={styles.buttonText}>Update</Text>
+              <Text style={styles.buttonText}>Publish</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -198,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CounsellorProfileUpdateSubPage;
+export default CreateArticleSubPage;

@@ -9,30 +9,24 @@ import {
   TextInput,
   Alert,
   KeyboardAvoidingView,
-  Button,
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { addDoc, collection } from "firebase/firestore";
 
-const MakeAppointmentSubPage = ({ id }) => {
-  const [data, setData] = useState("");
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
+const UpdateAppointmentSubPage = ({ data, id }) => {
+  const navigation = useNavigation();
   const windowHeight = Dimensions.get("window").height;
-  const appointmentCollectionRef = collection(db, "CounsellorAppointments");
 
   const [mydate, setDate] = useState(new Date());
-  const [description, setDescription] = useState("");
-  const [title, setTitle] = useState("");
-  const [newDate, setNewDate] = useState("");
-  const [newtime, setNewTime] = useState("");
+  const [description, setDescription] = useState(data.description);
+  const [title, setTitle] = useState(data.title);
+  const [newDate, setNewDate] = useState(data.date);
+  const [newtime, setNewTime] = useState(data.time);
   const [displaymode, setMode] = useState("time");
   const [isDisplayDate, setShow] = useState(false);
 
@@ -80,7 +74,7 @@ const MakeAppointmentSubPage = ({ id }) => {
     setShow(true);
     setMode(currentMode);
   };
-  
+
   const displayDatepicker = () => {
     showMode("date");
   };
@@ -89,27 +83,20 @@ const MakeAppointmentSubPage = ({ id }) => {
     showMode("time");
   };
 
-  const createAppointment = async () => {
-    addDoc(appointmentCollectionRef, {
-      counsellorId: id,
-      userId: "kkh04HnoCIVv7kbnkXYL",
-      appointmentId: "23456",
-      name: "Sanduni Perera",
-      age: "23",
-      image:
-        "https://images.pexels.com/photos/1197132/pexels-photo-1197132.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      date: newDate,
-      time: newtime,
-      description: description,
-      title: title,
-      status: "Pending",
-    })
-      .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
+  const updateAppointment = async () => {
+    if (title === "" || description === "") {
+      Alert.alert("Please fill all the fields");
+    } else {
+      const appointmentRef = doc(db, "CounsellorAppointments", id);
+      await updateDoc(appointmentRef, {
+        title: title,
+        description: description,
+        date: newDate,
+        time: newtime,
       });
+      Alert.alert("Appointment Updated");
+      navigation.navigate("Appointments");
+    }
   };
 
   return (
@@ -120,7 +107,7 @@ const MakeAppointmentSubPage = ({ id }) => {
         enabled
       >
         {/* Top bar */}
-        <TopBar title={"Make appointment"} />
+        <TopBar title={"Appointment details"} />
 
         {/* Content */}
         <View
@@ -130,19 +117,35 @@ const MakeAppointmentSubPage = ({ id }) => {
           }}
         >
           {/* Field data */}
-          <View>
+          <View style={{ maxHeight: 560 }}>
             <ScrollView>
-              <View>
-                <Text style={styles.mainFieldName}>Title</Text>
+              <View style={{ marginBottom: 100 }}>
+                <Text style={styles.mainFieldName}>Status</Text>
                 <TextInput
                   multiline={true}
+                  editable={false}
+                  defaultValue={data.status ? data.status : "No status"}
+                  style={[
+                    styles.input,
+                    { height: 40, color: "#ED6A8C", fontWeight: "bold" },
+                  ]}
+                />
+
+                <Text style={styles.mainFieldName}>Title</Text>
+                <TextInput
+                  value={title}
+                  multiline={true}
+                  defaultValue={data.title}
                   style={[styles.input, { height: 40 }]}
                   onChangeText={(text) => setTitle(text)}
                 />
+
                 <Text style={styles.mainFieldName}>Description</Text>
                 <TextInput
+                  value={description}
                   placeholderTextColor="white"
                   multiline={true}
+                  defaultValue={data.description}
                   style={[styles.input, { height: 145 }]}
                   onChangeText={(text) => setDescription(text)}
                 />
@@ -157,7 +160,8 @@ const MakeAppointmentSubPage = ({ id }) => {
                   >
                     <TextInput
                       multiline={true}
-                      defaultValue={newDate ? newDate : "Date"}
+                      defaultValue={data.date ? data.date : "Date"}
+                      value={newDate}
                       editable={false}
                       style={[styles.input, { height: 40, width: "89%" }]}
                       onChangeText={(text) => setSex(text)}
@@ -204,22 +208,22 @@ const MakeAppointmentSubPage = ({ id }) => {
                     />
                   </View>
                 </TouchableOpacity>
-              </View>
 
-              {isDisplayDate && (
-                <DateTimePicker
-                  value={mydate}
-                  mode={displaymode}
-                  is24Hour={true}
-                  display="default"
-                  onChange={changeSelectedDate}
-                />
-              )}
+                {isDisplayDate && (
+                  <DateTimePicker
+                    value={mydate}
+                    mode={displaymode}
+                    is24Hour={true}
+                    display="default"
+                    onChange={changeSelectedDate}
+                  />
+                )}
+              </View>
             </ScrollView>
           </View>
 
           {/* Buttons */}
-          <View
+          {/* <View
             style={{
               position: "absolute",
               top: windowHeight - 180,
@@ -227,21 +231,32 @@ const MakeAppointmentSubPage = ({ id }) => {
               justifyContent: "space-between",
               // marginTop: 20,
             }}
+          ></View> */}
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: 0,
+              marginVertical: 10,
+              marginHorizontal: 10,
+              marginLeft: 0,
+            }}
           >
             <TouchableOpacity
-              // onPress={handleSubmit}
               style={{
                 backgroundColor: "#ED6A8C",
-                width: "100%",
-                height: 50,
+                padding: 10,
                 borderRadius: 10,
-                justifyContent: "center",
                 alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
                 alignSelf: "center",
-                marginTop: 30,
-                //   marginHorizontal: 0,
+                marginVertical: 10,
+                marginTop: 20,
+                marginBottom: 10,
               }}
-              onPress={createAppointment}
+              onPress={updateAppointment}
             >
               <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
@@ -276,12 +291,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     marginTop: 10,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
   input: {
     backgroundColor: "#ffffff",
     borderRadius: 5,
@@ -302,6 +311,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 10,
   },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
 });
 
-export default MakeAppointmentSubPage;
+export default UpdateAppointmentSubPage;
