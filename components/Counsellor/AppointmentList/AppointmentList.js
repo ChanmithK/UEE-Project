@@ -17,6 +17,7 @@ import { db } from "../../../firebase";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import BottomTabs, { bottomTabIcons } from "../../Common/BottomTabs";
 
 const AppointmentList = () => {
   const windowHeight = Dimensions.get("window").height;
@@ -27,6 +28,7 @@ const AppointmentList = () => {
         {/* <SearchBar /> */}
         <View>
           <CounsellorAppointmentList />
+          <BottomTabs icons={bottomTabIcons} />
         </View>
       </View>
     </View>

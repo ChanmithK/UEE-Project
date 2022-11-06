@@ -47,6 +47,7 @@ const FormikLogin = () => {
             }));
             AsyncStorage.setItem("UserData", JSON.stringify(userData[0]));
             AsyncStorage.setItem("UserID", JSON.stringify(userData[0].id));
+            AsyncStorage.setItem("UserRole", JSON.stringify(userData[0].role));
 
             if (userData[0].role === "User") {
               navigation.navigate("ClientHomeScreen");
