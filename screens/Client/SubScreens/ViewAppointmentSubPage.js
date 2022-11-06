@@ -21,10 +21,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
   const navigation = useNavigation();
 
   const [data, setData] = useState("");
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
@@ -34,11 +30,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       setData(docSnap.data());
     }
     fetchData();
-    setName(data.name);
-    setBio(data.bio);
-    setDob(data.dob);
-    setSex(data.sex);
-  }, [data.name, data.bio, data.dob, data.sex]);
+  }, []);
 
   const deleteAppointment = () => {
     console.log(id);
@@ -98,7 +90,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                     styles.input,
                     { height: 40, color: "#ED6A8C", fontWeight: "bold" },
                   ]}
-                  onChangeText={(text) => setName(text)}
                 />
                 <Text style={styles.mainFieldName}>Title</Text>
                 <TextInput
@@ -106,7 +97,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   editable={false}
                   defaultValue={data.title}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setName(text)}
                 />
                 <Text style={styles.mainFieldName}>Description</Text>
                 <TextInput
@@ -115,7 +105,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   multiline={true}
                   defaultValue={data.description}
                   style={[styles.input, { height: 145 }]}
-                  onChangeText={(text) => setBio(text)}
                 />
                 <Text style={styles.mainFieldName}>Date</Text>
                 <TextInput
@@ -123,7 +112,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   editable={false}
                   defaultValue={data.date}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setDob(text)}
                 />
                 <Text style={styles.mainFieldName}>Time</Text>
                 <TextInput
@@ -131,9 +119,8 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   editable={false}
                   defaultValue={data.time}
                   style={[styles.input, { height: 40 }]}
-                  onChangeText={(text) => setSex(text)}
                 />
-                {data.status === "Accepted" ? (
+                {data.status === "Approved" ? (
                   <>
                     <Text style={styles.mainFieldName}>Session Link</Text>
                     <TextInput
@@ -143,19 +130,23 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                         data.sessionUrl ? data.sessionUrl : "No link"
                       }
                       style={[styles.input, { height: 40 }]}
-                      onChangeText={(text) => setSex(text)}
                     />
                   </>
                 ) : null}
-                <Text style={styles.mainFieldName}>Counsellor/Mentor Note</Text>
-                <TextInput
-                  placeholderTextColor="white"
-                  editable={false}
-                  multiline={true}
-                  defaultValue={data.note ? data.note : "No note"}
-                  style={[styles.input, { height: 145 }]}
-                  onChangeText={(text) => setBio(text)}
-                />
+                {data.status === "Approved" || data.status === "Declined" ? (
+                  <>
+                    <Text style={styles.mainFieldName}>
+                      Counsellor/Mentor Note
+                    </Text>
+                    <TextInput
+                      placeholderTextColor="white"
+                      editable={false}
+                      multiline={true}
+                      defaultValue={data.note ? data.note : "No note"}
+                      style={[styles.input, { height: 145 }]}
+                    />
+                  </>
+                ) : null}
               </View>
             </ScrollView>
           </View>
@@ -193,7 +184,11 @@ const ViewClientAppointmentSubPage = ({ id }) => {
             {/* Rejected Appointment */}
             {data.status === "Declined" ? (
               <TouchableOpacity
-                // onPress={handleSubmit}
+                onPress={() =>
+                  navigation.navigate("MakeAppointmentScreen", {
+                    id: data.counsellorId,
+                  })
+                }
                 style={{
                   backgroundColor: "#ED6A8C",
                   width: "100%",
@@ -205,7 +200,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   marginTop: 30,
                   //   marginHorizontal: 0,
                 }}
-                //   onPress={updateProfile}
               >
                 <Text style={styles.buttonText}>Book again</Text>
               </TouchableOpacity>

@@ -7,17 +7,15 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from "@firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth, db, storage } from "../../firebase";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { useEffect } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginSchema = Yup.object().shape({
   password: Yup.string()
@@ -26,22 +24,50 @@ const LoginSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
 });
 
-const onLogin = async (email, password) => {
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    console.log("Logged in successfully", email, password);
-  } catch (error) {
-    console.log("Error logging in: ", error);
-  }
-};
-
 const FormikLogin = () => {
+  const navigation = useNavigation();
+  const onLogin = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password).then(
+        (userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          const usersCollectionRef = collection(db, "Users");
+          // console.log("user", user);
+          const getUsers = async () => {
+            const filterdData = query(
+              usersCollectionRef,
+              where("userId", "==", user.uid)
+            );
+            const querySnapshot = await getDocs(filterdData);
+
+            const userData = querySnapshot.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id,
+            }));
+            AsyncStorage.setItem("UserData", JSON.stringify(userData[0]));
+            AsyncStorage.setItem("UserID", JSON.stringify(userData[0].id));
+
+            if (userData[0].role === "User") {
+              navigation.navigate("ClientHomeScreen");
+            }
+          };
+          getUsers();
+          // ...
+        }
+      );
+      console.log("Logged in successfully", email, password);
+    } catch (error) {
+      console.log("Error logging in: ", error);
+    }
+  };
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
       onSubmit={(values) => {
         onLogin(values.email, values.password);
         // navigation.goBack();
+        // navigation.navigate("ClientHomeScreen");
       }}
       validationSchema={LoginSchema}
       validateOnMount={false}

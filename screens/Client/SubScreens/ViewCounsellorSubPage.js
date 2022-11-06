@@ -112,7 +112,7 @@ const ViewCounsellorSubPage = ({ id }) => {
               <Text
                 style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
               >
-                {data.category}
+                {data.position}
               </Text>
             </View>
             <View style={{ marginLeft: 8 }}>
@@ -171,7 +171,10 @@ const ViewCounsellorSubPage = ({ id }) => {
             onPress={
               //toggleDeclineModal
               () => {
-                navigation.navigate("MakeAppointmentScreen", { id: data.id });
+                navigation.navigate("MakeAppointmentScreen", {
+                  id: id,
+                  name: data.name,
+                });
               }
             }
           >

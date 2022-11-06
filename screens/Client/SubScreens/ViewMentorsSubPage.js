@@ -32,7 +32,7 @@ const ViewMentorsSubPage = () => {
   useEffect(() => {
     const getMentors = async () => {
       const mentors = await getDocs(
-        query(collection(db, "Users"), where("role", "!=", "Mentor"))
+        query(collection(db, "Users"), where("role", "==", "Mentor"))
       );
       setMentorList(mentors.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       setSearchResult(
@@ -106,7 +106,7 @@ const ViewMentorsSubPage = () => {
                       <View style={styles.mentorDetails}>
                         <Text style={styles.mentorName}>{mentor.name}</Text>
                         <Text style={styles.mentorStatus}>
-                          {mentor.category}
+                          {mentor.position}
                         </Text>
                       </View>
                     </View>
