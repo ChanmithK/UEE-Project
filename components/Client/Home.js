@@ -135,7 +135,7 @@ const Mentors = () => {
   useEffect(() => {
     const getMentors = async () => {
       const mentors = await getDocs(
-        query(collection(db, "Users"), where("role", "!=", "mentor"))
+        query(collection(db, "Users"), where("role", "==", "Mentor"))
       );
       setMentorList(mentors.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
@@ -168,7 +168,7 @@ const Mentors = () => {
             <Image source={{ uri: mentor.image }} style={styles.UserImage} />
             <View style={styles.UserDetails}>
               <Text style={styles.UserName}>{mentor.name}</Text>
-              <Text style={styles.UserPosition}>{mentor.category}</Text>
+              <Text style={styles.UserPosition}>{mentor.position}</Text>
             </View>
             <View
               style={{
@@ -250,7 +250,7 @@ const Counsellors = () => {
             />
             <View style={styles.UserDetails}>
               <Text style={styles.UserName}>{counsellor.name}</Text>
-              <Text style={styles.UserPosition}>{counsellor.category}</Text>
+              <Text style={styles.UserPosition}>{counsellor.position}</Text>
             </View>
             <View
               style={{

@@ -14,7 +14,6 @@ import TopBar from "../../../components/Common/TopBar";
 import { useNavigation } from "@react-navigation/native";
 
 const ViewArticlesSubPage = ({ article }) => {
-  console.log(article);
   return (
     <View style={styles.container}>
       {/* Top bar */}

@@ -47,7 +47,7 @@ const ViewCounsellorsSubPage = () => {
       counsellorList.filter(
         (counsellor) =>
           counsellor.name.toLowerCase().includes(text.toLowerCase()) ||
-          counsellor.category.toLowerCase().includes(text.toLowerCase())
+          counsellor.position.toLowerCase().includes(text.toLowerCase())
       )
     );
   };

@@ -11,20 +11,16 @@ import {
   KeyboardAvoidingView,
   Button,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase";
-import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { addDoc, collection } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 const MakeAppointmentSubPage = ({ id }) => {
-  const [data, setData] = useState("");
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [dob, setDob] = useState("");
-  const [sex, setSex] = useState("");
+  const navigation = useNavigation();
+
   const windowHeight = Dimensions.get("window").height;
   const appointmentCollectionRef = collection(db, "CounsellorAppointments");
 
@@ -80,7 +76,7 @@ const MakeAppointmentSubPage = ({ id }) => {
     setShow(true);
     setMode(currentMode);
   };
-  
+
   const displayDatepicker = () => {
     showMode("date");
   };
@@ -89,24 +85,30 @@ const MakeAppointmentSubPage = ({ id }) => {
     showMode("time");
   };
 
+  const clientID = "kkh04HnoCIVv7kbnkXYL";
+
   const createAppointment = async () => {
+    const userDoc = doc(db, "Users", clientID);
+    const docSnap = await getDoc(userDoc);
+    const client = docSnap.data();
+
+    // const getAge = new Date().getFullYear() - client.dob.split("/")[2];
+    // console.log(getAge);
+
     addDoc(appointmentCollectionRef, {
       counsellorId: id,
-      userId: "kkh04HnoCIVv7kbnkXYL",
-      appointmentId: "23456",
-      name: "Sanduni Perera",
-      age: "23",
-      image:
-        "https://images.pexels.com/photos/1197132/pexels-photo-1197132.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      userId: clientID,
+      appointmentId: Math.random() * 100000,
+      name: client.name,
+      age: client.age,
+      image: client.image,
       date: newDate,
       time: newtime,
       description: description,
       title: title,
       status: "Pending",
     })
-      .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-      })
+      .then(navigation.navigate("BookedAppointmentsScreen"))
       .catch((error) => {
         console.error("Error adding document: ", error);
       });
@@ -164,7 +166,7 @@ const MakeAppointmentSubPage = ({ id }) => {
                     />
                     <Image
                       source={{
-                        uri: "https://img.icons8.com/material-outlined/24/000000/calendar-11.png",
+                        uri: "https://img.icons8.com/ios/50/null/calendar-30.png",
                       }}
                       style={{
                         height: 30,
@@ -193,7 +195,7 @@ const MakeAppointmentSubPage = ({ id }) => {
                     />
                     <Image
                       source={{
-                        uri: "https://img.icons8.com/windows/32/000000/retro-alarm-clock.png",
+                        uri: "https://img.icons8.com/ios/50/null/time--v1.png",
                       }}
                       style={{
                         height: 30,
@@ -243,7 +245,7 @@ const MakeAppointmentSubPage = ({ id }) => {
               }}
               onPress={createAppointment}
             >
-              <Text style={styles.buttonText}>Update</Text>
+              <Text style={styles.buttonText}>Make Appointment</Text>
             </TouchableOpacity>
           </View>
         </View>
