@@ -6,6 +6,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInWithEmailAndPassword } from "@firebase/auth";
@@ -13,7 +14,6 @@ import { auth, db, storage } from "../../firebase";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
@@ -25,8 +25,11 @@ const LoginSchema = Yup.object().shape({
 });
 
 const FormikLogin = () => {
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
   const onLogin = async (email, password) => {
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password).then(
         (userCredential) => {
@@ -53,6 +56,7 @@ const FormikLogin = () => {
             } else {
               navigation.navigate("AppointmentListScreen");
             }
+            setLoading(false);
           };
           getUsers();
           // ...
@@ -64,67 +68,79 @@ const FormikLogin = () => {
     }
   };
   return (
-    <Formik
-      initialValues={{ email: "", password: "" }}
-      onSubmit={(values) => {
-        onLogin(values.email, values.password);
-        // navigation.goBack();
-        // navigation.navigate("ClientHomeScreen");
-      }}
-      validationSchema={LoginSchema}
-      validateOnMount={false}
-    >
-      {({
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        values,
-        errors,
-        isValid,
-      }) => (
-        <>
-          <View style={styles.container}>
-            <View style={styles.textfield}>
-              <TextInput
-                placeholder="Email address"
-                placeholderTextColor="gray"
-                multiline={false}
-                style={styles.input}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                value={values.email}
-              />
-            </View>
-            {errors.email && (
-              <Text style={styles.formikErrorMessage}>{errors.email}</Text>
-            )}
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "50%" }}
+        />
+      ) : (
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          onSubmit={(values) => {
+            onLogin(values.email, values.password);
+            // navigation.goBack();
+            // navigation.navigate("ClientHomeScreen");
+          }}
+          validationSchema={LoginSchema}
+          validateOnMount={false}
+        >
+          {({
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            values,
+            errors,
+            isValid,
+          }) => (
+            <>
+              <View style={styles.container}>
+                <View style={styles.textfield}>
+                  <TextInput
+                    placeholder="Email address"
+                    placeholderTextColor="gray"
+                    multiline={false}
+                    style={styles.input}
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    value={values.email}
+                  />
+                </View>
+                {errors.email && (
+                  <Text style={styles.formikErrorMessage}>{errors.email}</Text>
+                )}
 
-            <View style={styles.textfield}>
-              <TextInput
-                placeholder="Password"
-                secureTextEntry={true}
-                placeholderTextColor="gray"
-                multiline={false}
-                style={styles.input}
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-                value={values.password}
-              />
-            </View>
-            {errors.password && (
-              <Text style={styles.formikErrorMessage}>{errors.password}</Text>
-            )}
-          </View>
+                <View style={styles.textfield}>
+                  <TextInput
+                    placeholder="Password"
+                    secureTextEntry={true}
+                    placeholderTextColor="gray"
+                    multiline={false}
+                    style={styles.input}
+                    onChangeText={handleChange("password")}
+                    onBlur={handleBlur("password")}
+                    value={values.password}
+                  />
+                </View>
+                {errors.password && (
+                  <Text style={styles.formikErrorMessage}>
+                    {errors.password}
+                  </Text>
+                )}
+              </View>
 
-          <TouchableOpacity
-            onPress={handleSubmit}
-            style={styles.buttonContainer}
-          >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-        </>
+              <TouchableOpacity
+                onPress={handleSubmit}
+                style={styles.buttonContainer}
+              >
+                <Text style={styles.buttonText}>Login</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </Formik>
       )}
-    </Formik>
+    </>
   );
 };
 
