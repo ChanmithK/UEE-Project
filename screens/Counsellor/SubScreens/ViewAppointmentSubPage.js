@@ -7,6 +7,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  ActivityIndicator,
   Alert,
 } from "react-native";
 import React, { useEffect } from "react";
@@ -26,6 +27,7 @@ import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 
 const ViewAppointmentSubPage = (id) => {
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
@@ -35,6 +37,7 @@ const ViewAppointmentSubPage = (id) => {
       const userDoc = doc(db, "CounsellorAppointments", id.id);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
+      setLoading(false);
     }
     fetchData();
   }, []);
@@ -54,7 +57,7 @@ const ViewAppointmentSubPage = (id) => {
   const acceptAppointment = async () => {
     const appointmentDoc = doc(db, "CounsellorAppointments", id.id);
     updateDoc(appointmentDoc, {
-      status: "Accepted",
+      status: "Approved",
       sessionUrl: sessionUrl,
       note: note,
     });
@@ -63,245 +66,265 @@ const ViewAppointmentSubPage = (id) => {
     const docSnap = await getDoc(userDoc);
     updateDoc(userDoc, {
       sessions: docSnap.data().sessions + 1,
+    }).then(() => {
+      navigation.navigate("AppointmentListScreen");
     });
-    navigation.navigate("AppointmentListScreen");
   };
 
   const declineAppointment = () => {
-    const appointmentDoc = doc(db, "CounsellorAppointments", id);
+    const appointmentDoc = doc(db, "CounsellorAppointments", id.id);
     updateDoc(appointmentDoc, {
       status: "Declined",
       note: note,
+    }).then(() => {
+      navigation.navigate("AppointmentListScreen");
     });
-    navigation.navigate("AppointmentListScreen");
   };
 
   return (
-    <View style={styles.container}>
-      {/* Top bar */}
-      <TopBar title={"Appointment Details"} />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "100%" }}
+        />
+      ) : (
+        <View style={styles.container}>
+          {/* Top bar */}
+          <TopBar title={"Appointment Details"} />
 
-      {/* Content */}
-      <View
-        style={{
-          marginHorizontal: 10,
-          marginVertical: 30,
-        }}
-      >
-        {/* Header Part */}
-        <View style={{ flexDirection: "row" }}>
-          <Image
-            source={{
-              uri: data.image,
+          {/* Content */}
+          <View
+            style={{
+              marginHorizontal: 10,
+              marginVertical: 30,
             }}
-            style={styles.userImage}
-          />
-          <View style={{ flexDirection: "column" }}>
+          >
+            {/* Header Part */}
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={{
+                  uri: data.image,
+                }}
+                style={styles.userImage}
+              />
+              <View style={{ flexDirection: "column" }}>
+                <View
+                  style={{ flexDirection: "row", marginLeft: 8, marginTop: -4 }}
+                >
+                  <Text
+                    style={{
+                      color: "#1A2042",
+                      fontWeight: "500",
+                      fontSize: 24,
+                    }}
+                  >
+                    {data.name}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: 8 }}>
+                  <Text
+                    style={{
+                      color: "#1A2042",
+                      fontSize: 16,
+                      fontWeight: "400",
+                    }}
+                  >
+                    Age of {data.age}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Field data */}
+            <View style={{ maxHeight: 450 }}>
+              <ScrollView>
+                <View>
+                  <Text style={styles.mainFieldName}>Title</Text>
+                  <Text style={styles.fieldData}>{data.title}</Text>
+                  <Text style={styles.mainFieldName}>Description</Text>
+                  <Text style={styles.fieldData}>{data.description}</Text>
+                  <Text style={styles.mainFieldName}>Date</Text>
+                  <Text style={styles.fieldData}>{data.date}</Text>
+                  <Text style={styles.mainFieldName}>Time</Text>
+                  <Text style={styles.fieldData}>{data.time}</Text>
+                </View>
+              </ScrollView>
+            </View>
+
+            {/* Buttons */}
             <View
-              style={{ flexDirection: "row", marginLeft: 8, marginTop: -4 }}
+              style={{
+                position: "absolute",
+                top: windowHeight - 180,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // marginTop: 20,
+              }}
             >
-              <Text
-                style={{ color: "#1A2042", fontWeight: "500", fontSize: 24 }}
-              >
-                {data.name}
-              </Text>
-            </View>
-            <View style={{ marginLeft: 8 }}>
-              <Text
-                style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
-              >
-                Age of {data.age}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Field data */}
-        <View style={{ maxHeight: 450 }}>
-          <ScrollView>
-            <View>
-              <Text style={styles.mainFieldName}>Title</Text>
-              <Text style={styles.fieldData}>{data.title}</Text>
-              <Text style={styles.mainFieldName}>Description</Text>
-              <Text style={styles.fieldData}>{data.description}</Text>
-              <Text style={styles.mainFieldName}>Date</Text>
-              <Text style={styles.fieldData}>{data.date}</Text>
-              <Text style={styles.mainFieldName}>Time</Text>
-              <Text style={styles.fieldData}>{data.time}</Text>
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* Buttons */}
-        <View
-          style={{
-            position: "absolute",
-            top: windowHeight - 180,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            // marginTop: 20,
-          }}
-        >
-          <View>
-            <Modal isVisible={isDeclineModalVisible}>
-              <View
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: 10,
-                }}
-              >
-                <View style={{ padding: 10 }}>
-                  <TextInput
-                    placeholder="Note"
-                    placeholderTextColor="gray"
-                    multiline={true}
-                    style={[styles.input, { height: 100 }]}
-                    onChangeText={(text) => setNote(text)}
-                  />
+              <View>
+                <Modal isVisible={isDeclineModalVisible}>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      marginTop: 20,
-                      marginVertical: 10,
-                      marginHorizontal: 10,
-                      marginLeft: 0,
+                      backgroundColor: "#ffffff",
+                      borderRadius: 10,
                     }}
                   >
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#ED6A8C",
-                        padding: 10,
-                        borderRadius: 10,
-                        alignItems: "center",
-                        // justifyContent: "center",
-                        width: "50%",
-                        alignSelf: "center",
-                        marginTop: 20,
-                        marginBottom: 10,
-                      }}
-                      onPress={toggleDeclineModal}
-                    >
-                      <Text style={styles.buttonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#ED6A8C",
-                        padding: 10,
-                        borderRadius: 10,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "50%",
-                        alignSelf: "center",
-                        marginLeft: 10,
-                        marginTop: 20,
-                        marginBottom: 10,
-                      }}
-                      onPress={declineAppointment}
-                    >
-                      <Text style={styles.buttonText}>Reject</Text>
-                    </TouchableOpacity>
+                    <View style={{ padding: 10 }}>
+                      <TextInput
+                        placeholder="Note"
+                        placeholderTextColor="gray"
+                        multiline={true}
+                        style={[styles.input, { height: 100 }]}
+                        onChangeText={(text) => setNote(text)}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          marginTop: 20,
+                          marginVertical: 10,
+                          marginHorizontal: 10,
+                          marginLeft: 0,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#ED6A8C",
+                            padding: 10,
+                            borderRadius: 10,
+                            alignItems: "center",
+                            // justifyContent: "center",
+                            width: "50%",
+                            alignSelf: "center",
+                            marginTop: 20,
+                            marginBottom: 10,
+                          }}
+                          onPress={toggleDeclineModal}
+                        >
+                          <Text style={styles.buttonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#ED6A8C",
+                            padding: 10,
+                            borderRadius: 10,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "50%",
+                            alignSelf: "center",
+                            marginLeft: 10,
+                            marginTop: 20,
+                            marginBottom: 10,
+                          }}
+                          onPress={declineAppointment}
+                        >
+                          <Text style={styles.buttonText}>Reject</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
                   </View>
-                </View>
+                </Modal>
               </View>
-            </Modal>
-          </View>
-          <TouchableOpacity
-            // onPress={handleSubmit}
-            style={styles.buttonContainer}
-            onPress={toggleDeclineModal}
-          >
-            <Text style={styles.buttonText}>Decline</Text>
-          </TouchableOpacity>
-
-          <View>
-            <Modal isVisible={isAcceptModalVisible}>
-              <View
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: 10,
-                }}
+              <TouchableOpacity
+                // onPress={handleSubmit}
+                style={styles.buttonContainer}
+                onPress={toggleDeclineModal}
               >
-                <View style={{ padding: 10 }}>
-                  <TextInput
-                    placeholder="Session URL"
-                    placeholderTextColor="gray"
-                    // multiline={true}
-                    // value="https://meet.google.com/lookup/abc"
-                    style={styles.input}
-                    onChangeText={(text) => setSessionUrl(text)}
-                    // value={values.bio}
-                  />
-                  <TextInput
-                    placeholder="Note"
-                    placeholderTextColor="gray"
-                    multiline={true}
-                    // value="Note"
-                    style={[styles.input, { height: 100 }]}
-                    onChangeText={(text) => setNote(text)}
+                <Text style={styles.buttonText}>Decline</Text>
+              </TouchableOpacity>
 
-                    // onChangeText={handleChange("bio")}
-                    // value={values.bio}
-                  />
+              <View>
+                <Modal isVisible={isAcceptModalVisible}>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      marginTop: 20,
-                      marginVertical: 10,
-                      marginHorizontal: 10,
-                      marginLeft: 0,
+                      backgroundColor: "#ffffff",
+                      borderRadius: 10,
                     }}
                   >
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#ED6A8C",
-                        padding: 10,
-                        borderRadius: 10,
-                        alignItems: "center",
-                        // justifyContent: "center",
-                        width: "50%",
-                        alignSelf: "center",
-                        marginTop: 20,
-                        marginBottom: 10,
-                      }}
-                      onPress={toggleAcceptModal}
-                    >
-                      <Text style={styles.buttonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#ED6A8C",
-                        padding: 10,
-                        borderRadius: 10,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "50%",
-                        alignSelf: "center",
-                        marginLeft: 10,
-                        marginTop: 20,
-                        marginBottom: 10,
-                      }}
-                      onPress={acceptAppointment}
-                    >
-                      <Text style={styles.buttonText}>Accept</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </Modal>
-          </View>
+                    <View style={{ padding: 10 }}>
+                      <TextInput
+                        placeholder="Session URL"
+                        placeholderTextColor="gray"
+                        // multiline={true}
+                        // value="https://meet.google.com/lookup/abc"
+                        style={styles.input}
+                        onChangeText={(text) => setSessionUrl(text)}
+                        // value={values.bio}
+                      />
+                      <TextInput
+                        placeholder="Note"
+                        placeholderTextColor="gray"
+                        multiline={true}
+                        // value="Note"
+                        style={[styles.input, { height: 100 }]}
+                        onChangeText={(text) => setNote(text)}
 
-          <TouchableOpacity
-            // onPress={handleSubmit}
-            style={styles.buttonContainer}
-            onPress={toggleAcceptModal}
-          >
-            <Text style={styles.buttonText}>Accept</Text>
-          </TouchableOpacity>
+                        // onChangeText={handleChange("bio")}
+                        // value={values.bio}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          marginTop: 20,
+                          marginVertical: 10,
+                          marginHorizontal: 10,
+                          marginLeft: 0,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#ED6A8C",
+                            padding: 10,
+                            borderRadius: 10,
+                            alignItems: "center",
+                            // justifyContent: "center",
+                            width: "50%",
+                            alignSelf: "center",
+                            marginTop: 20,
+                            marginBottom: 10,
+                          }}
+                          onPress={toggleAcceptModal}
+                        >
+                          <Text style={styles.buttonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#ED6A8C",
+                            padding: 10,
+                            borderRadius: 10,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "50%",
+                            alignSelf: "center",
+                            marginLeft: 10,
+                            marginTop: 20,
+                            marginBottom: 10,
+                          }}
+                          onPress={acceptAppointment}
+                        >
+                          <Text style={styles.buttonText}>Accept</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
+              </View>
+
+              <TouchableOpacity
+                // onPress={handleSubmit}
+                style={styles.buttonContainer}
+                onPress={toggleAcceptModal}
+              >
+                <Text style={styles.buttonText}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

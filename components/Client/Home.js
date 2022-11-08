@@ -4,6 +4,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -19,28 +20,31 @@ import { db } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// const user = { id: "kkh04HnoCIVv7kbnkXYL" };
-
-// const getData = async () => {
-//   try {
-//     const value = await AsyncStorage.getItem("UserData");
-//     if (value !== null) {
-//       const user = { id: value };
-//     }
-//   } catch (e) {
-//     // error reading value
-//   }
-// };
-
 const Home = () => {
+  const [loading, setLoading] = useState(false);
+
+  // setTimeout(() => {
+  //   setLoading(false);
+  // }, 2000);
+
   return (
-    <View style={styles.MainContainer}>
-      <Header />
-      <Categories />
-      <Mentors />
-      <Counsellors />
-      <Articles />
-    </View>
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "100%" }}
+        />
+      ) : (
+        <View style={styles.MainContainer}>
+          <Header />
+          <Categories />
+          <Mentors />
+          <Counsellors />
+          <Articles />
+        </View>
+      )}
+    </>
   );
 };
 
