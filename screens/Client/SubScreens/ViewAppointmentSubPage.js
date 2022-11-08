@@ -171,7 +171,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
               // marginTop: 20,
             }}
           >
-            {CheckStatus === "Accepted" ? (
+            {CheckStatus === "Approved" ? (
               <TouchableOpacity
                 // onPress={handleSubmit}
                 style={{

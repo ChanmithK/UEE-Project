@@ -6,27 +6,18 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  TextInput,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
-import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 const CounsellorProfileSubPage = () => {
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const [data, setData] = useState("");
   const windowHeight = Dimensions.get("window").height;
@@ -39,102 +30,127 @@ const CounsellorProfileSubPage = () => {
       const userDoc = doc(db, "Users", user);
       const docSnap = await getDoc(userDoc);
       setData(docSnap.data());
+      setLoading(false);
     }
     fetchData();
   }, [data]);
 
   return (
-    <View style={styles.container}>
-      {/* Top bar */}
-      <TopBar title={"Profile"} />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "100%" }}
+        />
+      ) : (
+        <View style={styles.container}>
+          {/* Top bar */}
+          <TopBar title={"Profile"} />
 
-      {/* Content */}
-      <View
-        style={{
-          marginHorizontal: 10,
-          marginVertical: 30,
-        }}
-      >
-        {/* Header Part */}
-        <View style={{ flexDirection: "row" }}>
-          <Image
-            source={{
-              uri: data.image,
+          {/* Content */}
+          <View
+            style={{
+              marginHorizontal: 10,
+              marginVertical: 30,
             }}
-            style={styles.userImage}
-          />
-          <View style={{ flexDirection: "column", alignSelf: "center" }}>
+          >
+            {/* Header Part */}
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={{
+                  uri: data.image,
+                }}
+                style={styles.userImage}
+              />
+              <View style={{ flexDirection: "column", alignSelf: "center" }}>
+                <View
+                  style={{ flexDirection: "row", marginLeft: 8, marginTop: -4 }}
+                >
+                  <Text
+                    style={{
+                      color: "#1A2042",
+                      fontWeight: "500",
+                      fontSize: 24,
+                    }}
+                  >
+                    {data.name}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: 8 }}>
+                  <Text
+                    style={{
+                      color: "#1A2042",
+                      fontSize: 16,
+                      fontWeight: "400",
+                    }}
+                  >
+                    {data.position}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: 8 }}>
+                  <Text
+                    style={{
+                      color: "#1A2042",
+                      fontSize: 16,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {data.sessions} sessions
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Field data */}
+            <View style={{ maxHeight: 450 }}>
+              <ScrollView>
+                <View>
+                  <Text style={styles.mainFieldName}>Bio</Text>
+                  <Text style={styles.fieldData}>{data.bio}</Text>
+                  <Text style={styles.mainFieldName}>Email</Text>
+                  <Text style={styles.fieldData}>{data.email}</Text>
+                  <Text style={styles.mainFieldName}>Age</Text>
+                  <Text style={styles.fieldData}>{data.age}</Text>
+                  <Text style={styles.mainFieldName}>Sex</Text>
+                  <Text style={styles.fieldData}>{data.sex}</Text>
+                </View>
+              </ScrollView>
+            </View>
+
+            {/* Buttons */}
             <View
-              style={{ flexDirection: "row", marginLeft: 8, marginTop: -4 }}
+              style={{
+                position: "absolute",
+                top: windowHeight - 180,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // marginTop: 20,
+              }}
             >
-              <Text
-                style={{ color: "#1A2042", fontWeight: "500", fontSize: 24 }}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ED6A8C",
+                  width: "100%",
+                  height: 50,
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  alignSelf: "center",
+                  marginTop: 30,
+                  //   marginHorizontal: 0,
+                }}
+                onPress={() =>
+                  navigation.navigate("CounsellorProfileUpdateScreen")
+                }
               >
-                {data.name}
-              </Text>
-            </View>
-            <View style={{ marginLeft: 8 }}>
-              <Text
-                style={{ color: "#1A2042", fontSize: 16, fontWeight: "400" }}
-              >
-                {data.position}
-              </Text>
-            </View>
-            <View style={{ marginLeft: 8 }}>
-              <Text
-                style={{ color: "#1A2042", fontSize: 16, fontWeight: "500" }}
-              >
-                {data.sessions} sessions
-              </Text>
+                <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
-
-        {/* Field data */}
-        <View style={{ maxHeight: 450 }}>
-          <ScrollView>
-            <View>
-              <Text style={styles.mainFieldName}>Bio</Text>
-              <Text style={styles.fieldData}>{data.bio}</Text>
-              <Text style={styles.mainFieldName}>Email</Text>
-              <Text style={styles.fieldData}>{data.email}</Text>
-              <Text style={styles.mainFieldName}>Age</Text>
-              <Text style={styles.fieldData}>{data.age}</Text>
-              <Text style={styles.mainFieldName}>Sex</Text>
-              <Text style={styles.fieldData}>{data.sex}</Text>
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* Buttons */}
-        <View
-          style={{
-            position: "absolute",
-            top: windowHeight - 180,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            // marginTop: 20,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#ED6A8C",
-              width: "100%",
-              height: 50,
-              borderRadius: 10,
-              justifyContent: "center",
-              alignItems: "center",
-              alignSelf: "center",
-              marginTop: 30,
-              //   marginHorizontal: 0,
-            }}
-            onPress={() => navigation.navigate("CounsellorProfileUpdateScreen")}
-          >
-            <Text style={styles.buttonText}>Edit</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

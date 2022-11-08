@@ -1,52 +1,52 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
-import TopBar from '../Common/TopBar'
-import { useNavigation } from '@react-navigation/native'
-import { signOut } from '@firebase/auth'
-import { auth } from '../../firebase'
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React from "react";
+import TopBar from "../Common/TopBar";
+import { useNavigation } from "@react-navigation/native";
+import { signOut } from "@firebase/auth";
+import { auth } from "../../firebase";
 
 const Menu = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   const Logout = async () => {
     try {
-      await signOut(auth)
-      navigation.navigate('LoginScreen')
+      await signOut(auth);
+      navigation.navigate("LoginScreen");
     } catch (e) {
-      console.error('Error signing out: ', e)
+      console.error("Error signing out: ", e);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
       {/* Top bar */}
-      <TopBar title={'Menu'} />
+      <TopBar title={"Menu"} />
 
       <View style={styles.view}>
-        <TouchableOpacity onPress={() => navigation.navigate('')}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate('')}>
           <Text style={styles.text}>Profile</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('BookedAppointmentsScreen')}
+          onPress={() => navigation.navigate("BookedAppointmentsScreen")}
         >
           <Text style={styles.text}>Booked Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewMentorsScreen')}
+          onPress={() => navigation.navigate("ViewMentorsScreen")}
         >
           <Text style={styles.text}>Mentors</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewCounsellorsScreen')}
+          onPress={() => navigation.navigate("ViewCounsellorsScreen")}
         >
           <Text style={styles.text}>Counsellors</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ViewArticlesScreen')}
+          onPress={() => navigation.navigate("ViewArticlesScreen")}
         >
           <Text style={styles.text}>Articles</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('')}>
+        <TouchableOpacity onPress={() => navigation.navigate("")}>
           <Text style={styles.text}>Saved</Text>
         </TouchableOpacity>
       </View>
@@ -56,8 +56,8 @@ const Menu = () => {
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -65,30 +65,30 @@ const styles = StyleSheet.create({
   },
 
   view: {
-    alignItems: 'center',
-    flexDirection: 'column',
+    alignItems: "center",
+    flexDirection: "column",
     marginVertical: 100,
   },
 
   text: {
     fontSize: 30,
-    color: '#1A2042',
-    fontFamily: 'Roboto',
-    fontWeight: '400',
+    color: "#1A2042",
+    fontFamily: "Roboto",
+    fontWeight: "400",
     marginBottom: 25,
   },
   SignOutView: {
-    alignItems: 'center',
-    flexDirection: 'column',
+    alignItems: "center",
+    flexDirection: "column",
     marginVertical: 35,
   },
 
   textView: {
     fontSize: 20,
-    color: '#ED6A8C',
-    fontFamily: 'Roboto',
-    fontWeight: '300',
+    color: "#ED6A8C",
+    fontFamily: "Roboto",
+    fontWeight: "300",
   },
-})
+});
 
-export default Menu
+export default Menu;
