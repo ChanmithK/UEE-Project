@@ -16,6 +16,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { getAuth } from "@firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 
 const RegisterSchema = Yup.object().shape({
   password: Yup.string()
@@ -38,6 +39,7 @@ const RegisterSchema = Yup.object().shape({
 const FormikRegister = () => {
   const usersCollectionRef = collection(db, "Users");
   const auth = getAuth();
+  const navigation = useNavigation();
   // const [selectedValue, setSelectedValue] = useState("");
 
   const createUser = async (values) => {
@@ -71,6 +73,8 @@ const FormikRegister = () => {
         position: values.position,
         image:
           "https://images.pexels.com/photos/1024311/pexels-photo-1024311.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      }).then(() => {
+        navigation.navigate("LoginScreen");
       });
       console.log("Document written with ID: ", docRef);
     } catch (e) {
@@ -352,6 +356,13 @@ const FormikRegister = () => {
           >
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("LoginScreen");
+            }}
+          >
+            <Text style={styles.CreateAccount}>Login</Text>
+          </TouchableOpacity>
         </View>
       )}
     </Formik>
@@ -394,6 +405,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     fontSize: 12,
+  },
+  CreateAccount: {
+    fontSize: 15,
+    alignSelf: "center",
+    color: "#ED6A8C",
+    marginTop: 10,
   },
 });
 

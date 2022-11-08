@@ -35,7 +35,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="InitialPageScreen"
+        initialRouteName="LoginScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="InitialPageScreen" component={InitialPage} />
