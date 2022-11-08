@@ -8,23 +8,27 @@ import {
   Dimensions,
   TextInput,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+const ViewAppointmentSchema = Yup.object().shape({
+  _note: Yup.string().required("Note is required"),
+  _sessionUrl: Yup.string()
+    .required("Session Url is required")
+    .url("Invalid URL"),
+});
+
+const ViewAppointmentRejectSchema = Yup.object().shape({
+  _note: Yup.string().required("Note is required"),
+});
 
 const ViewAppointmentSubPage = (id) => {
   const [loading, setLoading] = useState(true);
@@ -54,12 +58,12 @@ const ViewAppointmentSubPage = (id) => {
     setDeclineModalVisible(!isDeclineModalVisible);
   };
 
-  const acceptAppointment = async () => {
+  const acceptAppointment = async (values) => {
     const appointmentDoc = doc(db, "CounsellorAppointments", id.id);
     updateDoc(appointmentDoc, {
       status: "Approved",
-      sessionUrl: sessionUrl,
-      note: note,
+      sessionUrl: values._sessionUrl,
+      note: values._note,
     });
 
     const userDoc = doc(db, "Users", data.userId);
@@ -71,11 +75,11 @@ const ViewAppointmentSubPage = (id) => {
     });
   };
 
-  const declineAppointment = () => {
+  const declineAppointment = (values) => {
     const appointmentDoc = doc(db, "CounsellorAppointments", id.id);
     updateDoc(appointmentDoc, {
       status: "Declined",
-      note: note,
+      note: values._note,
     }).then(() => {
       navigation.navigate("AppointmentListScreen");
     });
@@ -164,68 +168,92 @@ const ViewAppointmentSubPage = (id) => {
               }}
             >
               <View>
-                <Modal isVisible={isDeclineModalVisible}>
-                  <View
-                    style={{
-                      backgroundColor: "#ffffff",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <View style={{ padding: 10 }}>
-                      <TextInput
-                        placeholder="Note"
-                        placeholderTextColor="gray"
-                        multiline={true}
-                        style={[styles.input, { height: 100 }]}
-                        onChangeText={(text) => setNote(text)}
-                      />
+                <Formik
+                  initialValues={{
+                    _note: "",
+                  }}
+                  onSubmit={(values) => {
+                    declineAppointment(values);
+                  }}
+                  validationSchema={ViewAppointmentRejectSchema}
+                  validateOnMount={false}
+                >
+                  {({
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    errors,
+                  }) => (
+                    <Modal isVisible={isDeclineModalVisible}>
                       <View
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          marginTop: 20,
-                          marginVertical: 10,
-                          marginHorizontal: 10,
-                          marginLeft: 0,
+                          backgroundColor: "#ffffff",
+                          borderRadius: 10,
                         }}
                       >
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#ED6A8C",
-                            padding: 10,
-                            borderRadius: 10,
-                            alignItems: "center",
-                            // justifyContent: "center",
-                            width: "50%",
-                            alignSelf: "center",
-                            marginTop: 20,
-                            marginBottom: 10,
-                          }}
-                          onPress={toggleDeclineModal}
-                        >
-                          <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#ED6A8C",
-                            padding: 10,
-                            borderRadius: 10,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "50%",
-                            alignSelf: "center",
-                            marginLeft: 10,
-                            marginTop: 20,
-                            marginBottom: 10,
-                          }}
-                          onPress={declineAppointment}
-                        >
-                          <Text style={styles.buttonText}>Reject</Text>
-                        </TouchableOpacity>
+                        <View style={{ padding: 10 }}>
+                          <TextInput
+                            placeholder="Note"
+                            placeholderTextColor="gray"
+                            multiline={true}
+                            style={[styles.input, { height: 100 }]}
+                            // onChangeText={(text) => setNote(text)}
+                            onChangeText={handleChange("_note")}
+                            onBlur={handleBlur("_note")}
+                          />
+                          {errors._note && (
+                            <Text style={styles.errorText}>{errors._note}</Text>
+                          )}
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              marginTop: 20,
+                              marginVertical: 10,
+                              marginHorizontal: 10,
+                              marginLeft: 0,
+                            }}
+                          >
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ED6A8C",
+                                padding: 10,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                // justifyContent: "center",
+                                width: "50%",
+                                alignSelf: "center",
+                                marginTop: 20,
+                                marginBottom: 10,
+                              }}
+                              onPress={toggleDeclineModal}
+                            >
+                              <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ED6A8C",
+                                padding: 10,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "50%",
+                                alignSelf: "center",
+                                marginLeft: 10,
+                                marginTop: 20,
+                                marginBottom: 10,
+                              }}
+                              onPress={handleSubmit}
+                            >
+                              <Text style={styles.buttonText}>Reject</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </View>
-                </Modal>
+                    </Modal>
+                  )}
+                </Formik>
               </View>
               <TouchableOpacity
                 // onPress={handleSubmit}
@@ -236,81 +264,114 @@ const ViewAppointmentSubPage = (id) => {
               </TouchableOpacity>
 
               <View>
-                <Modal isVisible={isAcceptModalVisible}>
-                  <View
-                    style={{
-                      backgroundColor: "#ffffff",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <View style={{ padding: 10 }}>
-                      <TextInput
-                        placeholder="Session URL"
-                        placeholderTextColor="gray"
-                        // multiline={true}
-                        // value="https://meet.google.com/lookup/abc"
-                        style={styles.input}
-                        onChangeText={(text) => setSessionUrl(text)}
-                        // value={values.bio}
-                      />
-                      <TextInput
-                        placeholder="Note"
-                        placeholderTextColor="gray"
-                        multiline={true}
-                        // value="Note"
-                        style={[styles.input, { height: 100 }]}
-                        onChangeText={(text) => setNote(text)}
-
-                        // onChangeText={handleChange("bio")}
-                        // value={values.bio}
-                      />
+                <Formik
+                  initialValues={{
+                    _note: "",
+                    _sessionUrl: "",
+                  }}
+                  onSubmit={(values) => {
+                    acceptAppointment(values);
+                  }}
+                  validationSchema={ViewAppointmentSchema}
+                  validateOnMount={false}
+                >
+                  {({
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    errors,
+                  }) => (
+                    <Modal isVisible={isAcceptModalVisible}>
                       <View
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          marginTop: 20,
-                          marginVertical: 10,
-                          marginHorizontal: 10,
-                          marginLeft: 0,
+                          backgroundColor: "#ffffff",
+                          borderRadius: 10,
                         }}
                       >
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#ED6A8C",
-                            padding: 10,
-                            borderRadius: 10,
-                            alignItems: "center",
-                            // justifyContent: "center",
-                            width: "50%",
-                            alignSelf: "center",
-                            marginTop: 20,
-                            marginBottom: 10,
-                          }}
-                          onPress={toggleAcceptModal}
-                        >
-                          <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#ED6A8C",
-                            padding: 10,
-                            borderRadius: 10,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "50%",
-                            alignSelf: "center",
-                            marginLeft: 10,
-                            marginTop: 20,
-                            marginBottom: 10,
-                          }}
-                          onPress={acceptAppointment}
-                        >
-                          <Text style={styles.buttonText}>Accept</Text>
-                        </TouchableOpacity>
+                        <View style={{ padding: 10 }}>
+                          <TextInput
+                            placeholder="Session URL"
+                            placeholderTextColor="gray"
+                            // multiline={true}
+                            // value="https://meet.google.com/lookup/abc"
+                            style={styles.input}
+                            // onChangeText={(text) => setSessionUrl(text)}
+                            onChangeText={handleChange("_sessionUrl")}
+                            onBlur={handleBlur("_sessionUrl")}
+
+                            // value={values.bio}
+                          />
+                          {errors._sessionUrl && (
+                            <Text style={styles.errorText}>
+                              {errors._sessionUrl}
+                            </Text>
+                          )}
+                          <TextInput
+                            placeholder="Note"
+                            placeholderTextColor="gray"
+                            multiline={true}
+                            // value="Note"
+                            style={[styles.input, { height: 100 }]}
+                            // onChangeText={(text) => setNote(text)}
+                            onChangeText={handleChange("_note")}
+                            onBlur={handleBlur("_note")}
+
+                            // onChangeText={handleChange("bio")}
+                            // value={values.bio}
+                          />
+                          {errors._note && (
+                            <Text style={styles.errorText}>{errors._note}</Text>
+                          )}
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              marginTop: 20,
+                              marginVertical: 10,
+                              marginHorizontal: 10,
+                              marginLeft: 0,
+                            }}
+                          >
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ED6A8C",
+                                padding: 10,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                // justifyContent: "center",
+                                width: "50%",
+                                alignSelf: "center",
+                                marginTop: 20,
+                                marginBottom: 10,
+                              }}
+                              onPress={toggleAcceptModal}
+                            >
+                              <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ED6A8C",
+                                padding: 10,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "50%",
+                                alignSelf: "center",
+                                marginLeft: 10,
+                                marginTop: 20,
+                                marginBottom: 10,
+                              }}
+                              onPress={handleSubmit}
+                            >
+                              <Text style={styles.buttonText}>Accept</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </View>
-                </Modal>
+                    </Modal>
+                  )}
+                </Formik>
               </View>
 
               <TouchableOpacity
@@ -390,6 +451,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,
+  },
+
+  errorText: {
+    color: "red",
+    // fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 6,
+    textAlign: "left",
   },
 });
 

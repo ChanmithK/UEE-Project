@@ -82,7 +82,7 @@ const CounsellorAppointmentList = () => {
       getAppointments();
     }
     searchAppointment();
-  }, [search]);
+  }, [search, appointments]);
 
   const searchAppointment = () => {
     const filtered = appointments.filter((appointment) =>

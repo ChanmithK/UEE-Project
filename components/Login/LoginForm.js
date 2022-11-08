@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import React from "react";
 import FormikLogin from "./FormikLogin";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginForm = () => {
+  const navigation = useNavigation();
   return (
     <View>
       <LoginImage />
@@ -28,7 +30,11 @@ const LoginForm = () => {
               <FormikLogin />
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("InitialPageScreen");
+                }}
+              >
                 <Text style={styles.CreateAccount}>Create an account</Text>
               </TouchableOpacity>
             </View>
