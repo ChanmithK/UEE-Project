@@ -1,38 +1,54 @@
 export const ARTICLES = [
   {
-    id: 1,
-    title: "How to be a good listener",
     image:
-      "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Mental Health",
-    rating: 4.5,
-    reviews: 100,
+      "https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
-    id: 2,
-    title: "How to be a good listener",
     image:
-      "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Mental Health",
-    rating: 4.5,
-    reviews: 100,
+      "https://images.pexels.com/photos/1109197/pexels-photo-1109197.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
-    id: 3,
-    title: "How to be a good listener",
     image:
-      "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Mental Health",
-    rating: 4.5,
-    reviews: 100,
+      "https://images.pexels.com/photos/1565982/pexels-photo-1565982.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
-    id: 4,
-    title: "How to be a good listener",
     image:
-      "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Mental Health",
-    rating: 4.5,
-    reviews: 100,
+      "https://images.pexels.com/photos/175753/pexels-photo-175753.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/2113556/pexels-photo-2113556.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/2122280/pexels-photo-2122280.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/3026808/pexels-photo-3026808.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/2313686/pexels-photo-2313686.jpeg?auto=compress&cs=tinysrgb&w=400",
+  },
+  {
+    image:
+      "https://images.pexels.com/photos/3054690/pexels-photo-3054690.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
 ];

@@ -5,7 +5,7 @@ import Home from "../../components/Client/Home";
 import BottomTabs, { bottomTabIcons } from "../../components/Common/BottomTabs";
 import { ScrollView } from "react-native-gesture-handler";
 import { Text } from "react-native";
-import BookedAppointments from "../../components/Client/BookedAppointments";
+import BookedAppointments from "./SubScreens/BookedAppointmentsSubPage";
 
 const BookedAppointmentsScreen = () => {
   return (

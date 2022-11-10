@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const AppointmentList = () => {
   const windowHeight = Dimensions.get("window").height;
@@ -51,17 +53,23 @@ const SearchBar = () => (
 );
 
 const CounsellorAppointmentList = () => {
+  const navigation = useNavigation();
   const [appointments, setAppointments] = useState([]);
   const [search, setSearch] = useState(null);
 
-  // console.log("value", search);
-  const usersCollectionRef = collection(db, "CounsellorAppointments");
+  const usersCollectionRef = query(
+    collection(db, "CounsellorAppointments"),
+    where("status", "==", "Pending")
+  );
   useEffect(() => {
     if (search === null || search === "") {
       const getAppointments = async () => {
+        const value = await AsyncStorage.getItem("UserID");
+        const user = JSON.parse(value);
+
         const filterdData = query(
           usersCollectionRef,
-          where("counsellorId", "==", "kkh04HnoCIVv7kbnkXYL")
+          where("counsellorId", "==", user)
         );
         const querySnapshot = await getDocs(filterdData);
         setAppointments(
@@ -102,7 +110,14 @@ const CounsellorAppointmentList = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ marginBottom: 250 }}>
           {appointments.map((appointment, index) => (
-            <TouchableOpacity key={index}>
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                navigation.navigate("ViewAppointmentScreen", {
+                  id: appointment.id,
+                })
+              }
+            >
               <View style={styles.appointmentContainer}>
                 <Image
                   source={{ uri: appointment.image }}

@@ -7,6 +7,7 @@ export const MENTORS = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    status: "Certified Counsellor",
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const MENTORS = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    status: "Certified Counsellor",
   },
   {
     id: 2,
@@ -25,5 +27,6 @@ export const MENTORS = [
     category: "Mental Health",
     rating: 4.5,
     reviews: 100,
+    status: "Certified Counsellor",
   },
 ];
