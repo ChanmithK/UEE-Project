@@ -40,7 +40,7 @@ const ViewCreatedArticlesSubPage = () => {
       getAtricles();
     }
     searchArticles();
-  }, [search, articles]);
+  }, [search]);
 
   const searchArticles = () => {
     const filtered = articles.filter(
