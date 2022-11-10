@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import { ARTICLES } from "../../../components/Data/Articles";
 
 const CreateArticleSchema = Yup.object().shape({
   _description: Yup.string()
@@ -33,6 +34,8 @@ const CreateArticleSubPage = () => {
   const navigation = useNavigation();
   const windowHeight = Dimensions.get("window").height;
   const articleCollectionRef = collection(db, "Articles");
+
+  const imageData = ARTICLES[Math.floor(Math.random() * ARTICLES.length)];
 
   const [user, setUser] = useState("");
 
@@ -50,12 +53,10 @@ const CreateArticleSubPage = () => {
     addDoc(articleCollectionRef, {
       authorID: user.id,
       author: user.name,
-      image:
-        "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      image: imageData.image,
       title: values._title,
       description: values._description,
       category: values._category,
-      hashTags: values._hashTags,
     })
       .then((docRef) => {
         navigation.navigate("ViewCreatedArticlesScreen");
