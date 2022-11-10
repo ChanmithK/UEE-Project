@@ -28,6 +28,8 @@ import RegisterMentor from "./screens/RegisterMentor";
 import MenuScreen from "./components/Client/Menu";
 import CounsellorMenu from "./components/Counsellor/CounsellorMenu";
 import AppointmentHistoryList from "./screens/Counsellor/AppointmentHistoryList";
+import Chat from "./screens/Common/Chat";
+import ChatList from "./screens/Common/ChatList";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -49,7 +51,8 @@ const SignedInStack = () => {
           component={RegisterCounsellor}
         />
         <Stack.Screen name="RegisterScreenMentor" component={RegisterMentor} />
-
+        <Stack.Screen name="ChatScreen" component={Chat} />
+        <Stack.Screen name="ChatListScreen" component={ChatList} />
         {/* Client Screens */}
         <Stack.Screen name="ClientHomeScreen" component={ClientHomeScreen} />
         <Stack.Screen name="MenuScreen" component={MenuScreen} />
