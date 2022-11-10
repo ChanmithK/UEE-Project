@@ -2,7 +2,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   ScrollView,
   Dimensions,
@@ -16,9 +15,20 @@ import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+  getDatabase,
+  firebase,
+  get,
+  ref,
+  set,
+  on,
+  push,
+  update,
+} from "firebase/database";
 
 const ViewClientAppointmentSubPage = ({ id }) => {
   const navigation = useNavigation();
+  // const [clientData, setClientData] = useState(null);
 
   const [data, setData] = useState({
     name: "",
@@ -27,9 +37,10 @@ const ViewClientAppointmentSubPage = ({ id }) => {
     date: "",
     time: "",
     category: "",
-    counsellor: "",
+    counsellorName: "",
     mentor: "",
     status: "",
+    counsellorImage: "",
   });
   const windowHeight = Dimensions.get("window").height;
 
@@ -68,6 +79,131 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       ],
       { cancelable: false }
     );
+  };
+
+  const findUser = async (name) => {
+    const database = getDatabase();
+    const mySnapshot = await get(ref(database, `users/${name}`));
+
+    return mySnapshot.val();
+  };
+
+  const startConversation = async () => {
+    const database = getDatabase();
+    const isClient = await findUser(data.name);
+    var clientData = null;
+
+    if (isClient) {
+      clientData = isClient;
+    } else {
+      const newUserObj = {
+        username: data.name,
+        avatar: data.image,
+      };
+      set(ref(database, `users/${data.name}`), newUserObj);
+      clientData = newUserObj;
+    }
+
+    //check for the counsellor user
+    const isCounsellor = await findUser(data.counsellorName);
+    var counsellorData = null;
+
+    if (isCounsellor) {
+      counsellorData = isCounsellor;
+    } else {
+      const newUserObj = {
+        username: data.counsellorName,
+        avatar: data.counsellorImage,
+      };
+      set(ref(database, `users/${data.counsellorName}`), newUserObj);
+      counsellorData = newUserObj;
+    }
+
+    // console.log("CLIENT", clientData);
+    // console.log("Counsellor", counsellorData);
+
+    if (clientData.friends) {
+      clientData.friends.findIndex((f) => {
+        if (f.username !== counsellorData.username) {
+          const newChatroomRef = push(ref(database, "chatrooms"), {
+            firstUser: clientData.username,
+            secondUser: counsellorData.username,
+            messages: [],
+          });
+
+          const newChatroomId = newChatroomRef.key;
+
+          const userFriends = clientData.friends || [];
+          //join myself to this user friend list
+          update(ref(database, `users/${clientData.username}`), {
+            friends: [
+              ...userFriends,
+              {
+                username: counsellorData.username,
+                avatar: counsellorData.avatar,
+                chatroomId: newChatroomId,
+              },
+            ],
+          });
+
+          const myFriends = counsellorData.friends || [];
+          //add this user to my friend list
+          update(ref(database, `users/${counsellorData.username}`), {
+            friends: [
+              ...myFriends,
+              {
+                username: clientData.username,
+                avatar: clientData.avatar,
+                chatroomId: newChatroomId,
+              },
+            ],
+          });
+          return;
+        }
+      });
+      // don't let user add a user twice
+      // return;
+    } else {
+      const newChatroomRef = push(ref(database, "chatrooms"), {
+        firstUser: clientData.username,
+        secondUser: counsellorData.username,
+        messages: [],
+      });
+
+      const newChatroomId = newChatroomRef.key;
+
+      const userFriends = clientData.friends || [];
+      //join myself to this user friend list
+      update(ref(database, `users/${clientData.username}`), {
+        friends: [
+          ...userFriends,
+          {
+            username: counsellorData.username,
+            avatar: counsellorData.avatar,
+            chatroomId: newChatroomId,
+          },
+        ],
+      });
+
+      const myFriends = counsellorData.friends || [];
+      //add this user to my friend list
+      update(ref(database, `users/${counsellorData.username}`), {
+        friends: [
+          ...myFriends,
+          {
+            username: clientData.username,
+            avatar: clientData.avatar,
+            chatroomId: newChatroomId,
+          },
+        ],
+      });
+      return;
+    }
+
+    navigation.navigate("ChatScreen", {
+      user: clientData,
+      reciever: counsellorData,
+    });
   };
 
   return (
@@ -173,7 +309,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
           >
             {CheckStatus === "Approved" ? (
               <TouchableOpacity
-                // onPress={handleSubmit}
                 style={{
                   backgroundColor: "#ED6A8C",
                   width: "100%",
@@ -183,11 +318,11 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   alignItems: "center",
                   alignSelf: "center",
                   marginTop: 30,
-                  //   marginHorizontal: 0,
                 }}
-                //   onPress={updateProfile}
               >
-                <Text style={styles.buttonText}>Start a conversation</Text>
+                <TouchableOpacity onPress={() => startConversation()}>
+                  <Text style={styles.buttonText}>Start a conversation</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
             ) : null}
 

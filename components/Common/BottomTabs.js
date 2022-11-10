@@ -10,13 +10,13 @@ export const bottomTabIcons = [
     name: "Message",
     active: "https://img.icons8.com/ios/50/ED6A8C/topic.png",
     inactive: "https://img.icons8.com/ios/50/000000/topic.png",
-    page: "Message",
+    page: ["ChatListScreen", "ChatListScreen"],
   },
   {
     name: "Home",
     active: "https://img.icons8.com/ios/50/ED6A8C/home--v1.png",
     inactive: "https://img.icons8.com/ios/50/000000/home--v1.png",
-    page: "ClientHomeScreen",
+    page: ["ClientHomeScreen", "ClientHomeScreen"],
   },
   {
     name: "Dashboard",
