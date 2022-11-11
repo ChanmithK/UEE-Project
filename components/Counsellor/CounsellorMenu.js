@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { signOut } from "@firebase/auth";
 import { auth } from "../../firebase";
 
-const Menu = () => {
+const CounsellorMenu = () => {
   const navigation = useNavigation();
 
   const Logout = async () => {
@@ -23,31 +23,31 @@ const Menu = () => {
       <TopBar title={"Menu"} />
 
       <View style={styles.view}>
-        {/* <TouchableOpacity onPress={() => navigation.navigate('')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CounsellorProfileScreen")}
+        >
           <Text style={styles.text}>Profile</Text>
-        </TouchableOpacity> */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate("BookedAppointmentsScreen")}
-        >
-          <Text style={styles.text}>Booked Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ViewMentorsScreen")}
+          onPress={() => navigation.navigate("AppointmentListScreen")}
         >
-          <Text style={styles.text}>Mentors</Text>
+          <Text style={styles.text}>Appointments</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ViewCounsellorsScreen")}
+          onPress={() => navigation.navigate("AppointmentHistoryListScreen")}
         >
-          <Text style={styles.text}>Counsellors</Text>
+          <Text style={styles.text}>Appointment History</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ViewCreatedArticlesScreen")}
+        >
+          <Text style={styles.text}>My Articles</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ViewArticlesScreen")}
+          onPress={() => navigation.navigate("CreateArticleScreen")}
         >
-          <Text style={styles.text}>Articles</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("")}>
-          <Text style={styles.text}>Saved</Text>
+          <Text style={styles.text}>Publish Article</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.SignOutView}>
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Menu;
+export default CounsellorMenu;

@@ -6,17 +6,20 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../../../components/Common/TopBar";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
-const ViewCreatedArticleSubPage = () => {
+const ViewCreatedArticleSubPage = ({ id }) => {
+  const navigation = useNavigation();
   const height = Dimensions.get("window").height;
-  const articleId = "0Zfiv61f4dbClMrkJDqO";
   const [article, setArticle] = React.useState([]);
-  const docRef = doc(db, "Articles", articleId);
+  const docRef = doc(db, "Articles", id);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getAtricles = async () => {
@@ -26,110 +29,118 @@ const ViewCreatedArticleSubPage = () => {
       } else {
         console.log("No such document!");
       }
+      setLoading(false);
     };
     getAtricles();
   }, []);
 
   const deleteArticle = () => {
-    const articleDoc = doc(db, "Articles", articleId);
+    const articleDoc = doc(db, "Articles", id);
     deleteDoc(articleDoc);
 
-    // const storage = getStorage();
-    // const imageRef = ref(storage, `images/${data.image}`);
-    // // Delete the file
-    // deleteObject(imageRef).catch((error) => {
-    //   // Uh-oh, an error occurred!
-    // });
+    navigation.navigate("ViewCreatedArticlesScreen");
   };
 
-  //   console.log(article);
-
   return (
-    <View style={styles.container}>
-      {/* Top bar */}
-      <TopBar title={""} />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "100%" }}
+        />
+      ) : (
+        <View style={styles.container}>
+          {/* Top bar */}
+          <TopBar title={""} />
 
-      {/* Content */}
-      <View
-        style={{
-          marginHorizontal: 10,
-          marginVertical: 30,
-        }}
-      >
-        {/* Atricles List */}
-        <View style={{ marginTop: 10, maxHeight: 560 }}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ marginBottom: 150 }}>
-              <Text style={styles.articleTitle}>
-                {article.title ? article.title : "Title"}
-              </Text>
-              <Image
-                source={{
-                  uri: article.image
-                    ? article.image
-                    : "https://picsum.photos/200",
-                }}
-                style={styles.image}
-              />
-              <Text style={styles.articleText}>
-                {article.description ? article.description : "Content"}
-              </Text>
+          {/* Content */}
+          <View
+            style={{
+              marginHorizontal: 10,
+              marginVertical: 30,
+            }}
+          >
+            {/* Atricles List */}
+            <View style={{ marginTop: 10, maxHeight: 560 }}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={{ marginBottom: 150 }}>
+                  <Text style={styles.articleTitle}>
+                    {article.title ? article.title : "Title"}
+                  </Text>
+                  <Image
+                    source={{
+                      uri: article.image
+                        ? article.image
+                        : "https://picsum.photos/200",
+                    }}
+                    style={styles.image}
+                  />
+                  <Text style={styles.articleText}>
+                    {article.description ? article.description : "Content"}
+                  </Text>
 
-              <Text style={styles.articleCategory}>
-                Category: {article.category ? article.category : "Category"}
-              </Text>
-              <Text style={styles.hashTags}>
-                HashTags: {article.hashTags ? article.hashTags : "HashTags"}
-              </Text>
+                  <Text style={styles.articleCategory}>
+                    Category: {article.category ? article.category : "Category"}
+                  </Text>
+                  <Text style={styles.hashTags}>
+                    HashTags: {article.hashTags ? article.hashTags : "HashTags"}
+                  </Text>
+                </View>
+              </ScrollView>
             </View>
-          </ScrollView>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: height - 700,
+                marginVertical: 10,
+                marginHorizontal: 10,
+                marginLeft: 0,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ED6A8C",
+                  padding: 10,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  // justifyContent: "center",
+                  width: "50%",
+                  alignSelf: "center",
+                  marginTop: 20,
+                  marginBottom: 10,
+                }}
+                onPress={deleteArticle}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ED6A8C",
+                  padding: 10,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                  alignSelf: "center",
+                  marginLeft: 10,
+                  marginTop: 20,
+                  marginBottom: 10,
+                }}
+                onPress={() =>
+                  navigation.navigate("UpdateArticleScreen", {
+                    id: id,
+                  })
+                }
+              >
+                <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: height - 700,
-            marginVertical: 10,
-            marginHorizontal: 10,
-            marginLeft: 0,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#ED6A8C",
-              padding: 10,
-              borderRadius: 10,
-              alignItems: "center",
-              // justifyContent: "center",
-              width: "50%",
-              alignSelf: "center",
-              marginTop: 20,
-              marginBottom: 10,
-            }}
-            onPress={deleteArticle}
-          >
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#ED6A8C",
-              padding: 10,
-              borderRadius: 10,
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50%",
-              alignSelf: "center",
-              marginLeft: 10,
-              marginTop: 20,
-              marginBottom: 10,
-            }}
-            // onPress={acceptAppointment}
-          >
-            <Text style={styles.buttonText}>Edit</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

@@ -30,11 +30,6 @@ const RegisterFormUser = () => {
                 <FormikRegister />
               </ScrollView>
             </View>
-            <View>
-              <TouchableOpacity>
-                <Text style={styles.CreateAccount}>Create an account</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </KeyboardAvoidingView>

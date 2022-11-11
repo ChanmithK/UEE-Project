@@ -1,14 +1,12 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
-import AppointmentList from "../../components/Counsellor/AppointmentList/AppointmentList";
-import BottomTabs, { bottomTabIcons } from "../../components/Common/BottomTabs";
+import AppointmentHistoryListSubPage from "./SubScreens/AppointmentHistoryListSubPage";
 
-const AppointmentListScreen = () => {
+const AppointmentHistoryList = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <AppointmentList />
-      <BottomTabs icons={bottomTabIcons} />
+      <AppointmentHistoryListSubPage />
     </SafeAreaView>
   );
 };
@@ -20,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppointmentListScreen;
+export default AppointmentHistoryList;

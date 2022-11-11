@@ -30,11 +30,6 @@ const RegisterFormUser = () => {
                 <FormikRegister />
               </ScrollView>
             </View>
-            <View>
-              <TouchableOpacity>
-                <Text style={styles.CreateAccount}>Create an account</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -87,11 +82,6 @@ const styles = StyleSheet.create({
     width: 400,
     height: 240,
     marginLeft: 10,
-  },
-  CreateAccount: {
-    fontSize: 15,
-    alignSelf: "center",
-    color: "#ED6A8C",
   },
 });
 

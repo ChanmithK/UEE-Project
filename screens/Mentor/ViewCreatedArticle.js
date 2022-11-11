@@ -1,12 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import React from "react";
 import ViewCreatedArticleSubPage from "./SubScreens/ViewCreatedArticleSubPage";
 
-const ViewCreatedArticle = () => {
+const ViewCreatedArticle = ({ navigation, route }) => {
+  const id = route.params.id;
+
   return (
     <SafeAreaView style={styles.container}>
-      <ViewCreatedArticleSubPage />
+      <ViewCreatedArticleSubPage id={id} />
     </SafeAreaView>
   );
 };

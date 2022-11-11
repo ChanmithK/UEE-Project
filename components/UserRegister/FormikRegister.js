@@ -16,6 +16,9 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { getAuth } from "@firebase/auth";
+import { useNavigation } from "@react-navigation/native";
+import { WomenArray } from "../Data/Women";
+// import women from ``;
 
 const RegisterSchema = Yup.object().shape({
   password: Yup.string()
@@ -32,7 +35,9 @@ const RegisterSchema = Yup.object().shape({
 const FormikRegister = () => {
   const usersCollectionRef = collection(db, "Users");
   const auth = getAuth();
-  // const [selectedValue, setSelectedValue] = useState("");
+  const navigation = useNavigation();
+
+  const imageData = WomenArray[Math.floor(Math.random() * WomenArray.length)];
 
   const createUser = async (values) => {
     try {
@@ -40,16 +45,12 @@ const FormikRegister = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log("user bn", user);
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           // ..
         });
-
-      // console.log("Logged in successfully", email, password);
     } catch (error) {
       console.log("Error logging in: ", error);
     }
@@ -62,15 +63,14 @@ const FormikRegister = () => {
         age: values.age,
         userId: user.uid,
         role: "User",
-        image:
-          "https://images.pexels.com/photos/1024311/pexels-photo-1024311.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        image: imageData.image,
+      }).then(() => {
+        navigation.navigate("LoginScreen");
       });
       console.log("Document written with ID: ", docRef);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-    // alert("User Created", values.email);
-    // console.log("Values", values);
   };
 
   return (
@@ -84,8 +84,6 @@ const FormikRegister = () => {
       }}
       onSubmit={(values) => {
         createUser(values);
-        // console.log("Values", values);
-        // navigation.goBack();
       }}
       validationSchema={RegisterSchema}
       validateOnMount={false}
@@ -261,6 +259,13 @@ const FormikRegister = () => {
           >
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("LoginScreen");
+            }}
+          >
+            <Text style={styles.CreateAccount}>Login</Text>
+          </TouchableOpacity>
         </View>
       )}
     </Formik>
@@ -303,6 +308,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     fontSize: 12,
+  },
+  CreateAccount: {
+    fontSize: 15,
+    alignSelf: "center",
+    color: "#ED6A8C",
+    marginTop: 10,
   },
 });
 

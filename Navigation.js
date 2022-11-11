@@ -26,6 +26,10 @@ import RegisterScreenUser from "./screens/RegisterScreenUser";
 import RegisterCounsellor from "./screens/RegisterCounsellor";
 import RegisterMentor from "./screens/RegisterMentor";
 import MenuScreen from "./components/Client/Menu";
+import CounsellorMenu from "./components/Counsellor/CounsellorMenu";
+import AppointmentHistoryList from "./screens/Counsellor/AppointmentHistoryList";
+import Chat from "./screens/Common/Chat";
+import ChatList from "./screens/Common/ChatList";
 
 const Stack = createStackNavigator();
 const screenOptions = { headerShown: false };
@@ -33,7 +37,7 @@ const SignedInStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="InitialPageScreen"
+        initialRouteName="LoginScreen"
         screenOptions={screenOptions}
       >
         <Stack.Screen name="InitialPageScreen" component={InitialPage} />
@@ -47,7 +51,8 @@ const SignedInStack = () => {
           component={RegisterCounsellor}
         />
         <Stack.Screen name="RegisterScreenMentor" component={RegisterMentor} />
-
+        <Stack.Screen name="ChatScreen" component={Chat} />
+        <Stack.Screen name="ChatListScreen" component={ChatList} />
         {/* Client Screens */}
         <Stack.Screen name="ClientHomeScreen" component={ClientHomeScreen} />
         <Stack.Screen name="MenuScreen" component={MenuScreen} />
@@ -82,6 +87,10 @@ const SignedInStack = () => {
           component={AppointmentListScreen}
         />
         <Stack.Screen
+          name="AppointmentHistoryListScreen"
+          component={AppointmentHistoryList}
+        />
+        <Stack.Screen
           name="ViewAppointmentScreen"
           component={ViewAppointment}
         />
@@ -93,7 +102,7 @@ const SignedInStack = () => {
           name="CounsellorProfileUpdateScreen"
           component={CounsellorProfileUpdate}
         />
-
+        <Stack.Screen name="CounsellorMenuScreen" component={CounsellorMenu} />
         {/* Mentor */}
         <Stack.Screen name="CreateArticleScreen" component={CreateArticle} />
         <Stack.Screen

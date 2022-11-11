@@ -11,30 +11,45 @@ import {
 } from "react-native";
 import React, { useEffect } from "react";
 import TopBar from "../../../components/Common/TopBar";
-import { ARTICLES } from "../../../components/Data/Articles";
 import { db } from "../../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewCreatedArticlesSubPage = () => {
+  const navigation = useNavigation();
   const articleCollectionRef = collection(db, "Articles");
   const [articles, setArticles] = useState([]);
+  const [search, setSearch] = useState(null);
+
   useEffect(() => {
-    const getAtricles = async () => {
-      const filterdData = query(
-        articleCollectionRef,
-        where("authorId", "==", "12345")
-      );
-      const querySnapshot = await getDocs(filterdData);
+    if (search === null || search === "") {
+      const getAtricles = async () => {
+        const value = await AsyncStorage.getItem("UserID");
+        const user = JSON.parse(value);
+        const filterdData = query(
+          articleCollectionRef,
+          where("authorID", "==", user)
+        );
+        const querySnapshot = await getDocs(filterdData);
+        setArticles(
+          querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      };
+      getAtricles();
+    }
+    searchArticles();
+  }, [search]);
 
-      setArticles(
-        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      );
-    };
-    getAtricles();
-  }, []);
-
-  console.log("Articlessssss", articles);
+  const searchArticles = () => {
+    const filtered = articles.filter(
+      (article) =>
+        article.title.toLowerCase().includes(search.toLowerCase()) ||
+        article.author.toLowerCase().includes(search.toLowerCase())
+    );
+    setArticles(filtered);
+  };
 
   return (
     <View style={styles.container}>
@@ -55,6 +70,7 @@ const ViewCreatedArticlesSubPage = () => {
             placeholderTextColor="gray"
             multiline={false}
             style={styles.input}
+            onChangeText={(text) => setSearch(text)}
           />
           <Image
             source={{
@@ -70,7 +86,13 @@ const ViewCreatedArticlesSubPage = () => {
             <View style={{ marginBottom: 250 }}>
               {articles.map((article, index) => (
                 <View key={index}>
-                  <TouchableOpacity onPress={() => Alert.alert(article.title)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ViewCreatedArticleScreen", {
+                        id: article.id,
+                      })
+                    }
+                  >
                     <View style={styles.articleContainer}>
                       <Image
                         source={{ uri: article.image }}

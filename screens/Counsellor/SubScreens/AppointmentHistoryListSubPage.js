@@ -10,15 +10,17 @@ import {
 import React from "react";
 import TopBar from "../../../components/Common/TopBar";
 import { Image } from "react-native";
-import { APPOINTMENTS } from "../../Data/Appointments";
 import { useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import BottomTabs, {
+  bottomTabIcons,
+} from "../../../components/Common/BottomTabs";
 
-const AppointmentList = () => {
+const AppointmentHistoryListSubPage = () => {
   const windowHeight = Dimensions.get("window").height;
   return (
     <View style={{ height: windowHeight }}>
@@ -27,6 +29,7 @@ const AppointmentList = () => {
         {/* <SearchBar /> */}
         <View>
           <CounsellorAppointmentList />
+          <BottomTabs icons={bottomTabIcons} />
         </View>
       </View>
     </View>
@@ -59,7 +62,7 @@ const CounsellorAppointmentList = () => {
 
   const usersCollectionRef = query(
     collection(db, "CounsellorAppointments"),
-    where("status", "==", "Pending")
+    where("status", "==", "Approved")
   );
   useEffect(() => {
     if (search === null || search === "") {
@@ -79,7 +82,7 @@ const CounsellorAppointmentList = () => {
       getAppointments();
     }
     searchAppointment();
-  }, [search]);
+  }, [search, appointments]);
 
   const searchAppointment = () => {
     const filtered = appointments.filter((appointment) =>
@@ -212,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppointmentList;
+export default AppointmentHistoryListSubPage;

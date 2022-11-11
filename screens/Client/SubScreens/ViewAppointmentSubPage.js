@@ -2,7 +2,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   ScrollView,
   Dimensions,
@@ -16,11 +15,33 @@ import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+  getDatabase,
+  firebase,
+  get,
+  ref,
+  set,
+  on,
+  push,
+  update,
+} from "firebase/database";
 
 const ViewClientAppointmentSubPage = ({ id }) => {
   const navigation = useNavigation();
+  // const [clientData, setClientData] = useState(null);
 
-  const [data, setData] = useState("");
+  const [data, setData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    time: "",
+    category: "",
+    counsellorName: "",
+    mentor: "",
+    status: "",
+    counsellorImage: "",
+  });
   const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
@@ -30,10 +51,11 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       setData(docSnap.data());
     }
     fetchData();
-  }, []);
+  }, [id]);
+
+  const CheckStatus = data.status ? data.status : "";
 
   const deleteAppointment = () => {
-    console.log(id);
     Alert.alert(
       "Delete Appointment",
       "Are you sure you want to delete this appointment?",
@@ -51,13 +73,137 @@ const ViewClientAppointmentSubPage = ({ id }) => {
               await deleteDoc(userDoc);
             }
 
-            deleteData();
-            navigation.navigate("BookedAppointmentsScreen");
+            deleteData().then(navigation.navigate("BookedAppointmentsScreen"));
           },
         },
       ],
       { cancelable: false }
     );
+  };
+
+  const findUser = async (name) => {
+    const database = getDatabase();
+    const mySnapshot = await get(ref(database, `users/${name}`));
+
+    return mySnapshot.val();
+  };
+
+  const startConversation = async () => {
+    const database = getDatabase();
+    const isClient = await findUser(data.name);
+    var clientData = null;
+
+    if (isClient) {
+      clientData = isClient;
+    } else {
+      const newUserObj = {
+        username: data.name,
+        avatar: data.image,
+      };
+      set(ref(database, `users/${data.name}`), newUserObj);
+      clientData = newUserObj;
+    }
+
+    //check for the counsellor user
+    const isCounsellor = await findUser(data.counsellorName);
+    var counsellorData = null;
+
+    if (isCounsellor) {
+      counsellorData = isCounsellor;
+    } else {
+      const newUserObj = {
+        username: data.counsellorName,
+        avatar: data.counsellorImage,
+      };
+      set(ref(database, `users/${data.counsellorName}`), newUserObj);
+      counsellorData = newUserObj;
+    }
+
+    // console.log("CLIENT", clientData);
+    // console.log("Counsellor", counsellorData);
+
+    if (clientData.friends) {
+      clientData.friends.findIndex((f) => {
+        if (f.username !== counsellorData.username) {
+          const newChatroomRef = push(ref(database, "chatrooms"), {
+            firstUser: clientData.username,
+            secondUser: counsellorData.username,
+            messages: [],
+          });
+
+          const newChatroomId = newChatroomRef.key;
+
+          const userFriends = clientData.friends || [];
+          //join myself to this user friend list
+          update(ref(database, `users/${clientData.username}`), {
+            friends: [
+              ...userFriends,
+              {
+                username: counsellorData.username,
+                avatar: counsellorData.avatar,
+                chatroomId: newChatroomId,
+              },
+            ],
+          });
+
+          const myFriends = counsellorData.friends || [];
+          //add this user to my friend list
+          update(ref(database, `users/${counsellorData.username}`), {
+            friends: [
+              ...myFriends,
+              {
+                username: clientData.username,
+                avatar: clientData.avatar,
+                chatroomId: newChatroomId,
+              },
+            ],
+          });
+          return;
+        }
+      });
+      // don't let user add a user twice
+      // return;
+    } else {
+      const newChatroomRef = push(ref(database, "chatrooms"), {
+        firstUser: clientData.username,
+        secondUser: counsellorData.username,
+        messages: [],
+      });
+
+      const newChatroomId = newChatroomRef.key;
+
+      const userFriends = clientData.friends || [];
+      //join myself to this user friend list
+      update(ref(database, `users/${clientData.username}`), {
+        friends: [
+          ...userFriends,
+          {
+            username: counsellorData.username,
+            avatar: counsellorData.avatar,
+            chatroomId: newChatroomId,
+          },
+        ],
+      });
+
+      const myFriends = counsellorData.friends || [];
+      //add this user to my friend list
+      update(ref(database, `users/${counsellorData.username}`), {
+        friends: [
+          ...myFriends,
+          {
+            username: clientData.username,
+            avatar: clientData.avatar,
+            chatroomId: newChatroomId,
+          },
+        ],
+      });
+      return;
+    }
+
+    navigation.navigate("ChatScreen", {
+      user: clientData,
+      reciever: counsellorData,
+    });
   };
 
   return (
@@ -85,7 +231,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                 <TextInput
                   multiline={true}
                   editable={false}
-                  defaultValue={data.status ? data.status : "No status"}
+                  defaultValue={CheckStatus ? CheckStatus : "Pending"}
                   style={[
                     styles.input,
                     { height: 40, color: "#ED6A8C", fontWeight: "bold" },
@@ -120,7 +266,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   defaultValue={data.time}
                   style={[styles.input, { height: 40 }]}
                 />
-                {data.status === "Approved" ? (
+                {CheckStatus === "Approved" ? (
                   <>
                     <Text style={styles.mainFieldName}>Session Link</Text>
                     <TextInput
@@ -133,7 +279,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                     />
                   </>
                 ) : null}
-                {data.status === "Approved" || data.status === "Declined" ? (
+                {CheckStatus === "Approved" || CheckStatus === "Declined" ? (
                   <>
                     <Text style={styles.mainFieldName}>
                       Counsellor/Mentor Note
@@ -161,9 +307,8 @@ const ViewClientAppointmentSubPage = ({ id }) => {
               // marginTop: 20,
             }}
           >
-            {data.status === "Accepted" ? (
+            {CheckStatus === "Approved" ? (
               <TouchableOpacity
-                // onPress={handleSubmit}
                 style={{
                   backgroundColor: "#ED6A8C",
                   width: "100%",
@@ -173,16 +318,16 @@ const ViewClientAppointmentSubPage = ({ id }) => {
                   alignItems: "center",
                   alignSelf: "center",
                   marginTop: 30,
-                  //   marginHorizontal: 0,
                 }}
-                //   onPress={updateProfile}
               >
-                <Text style={styles.buttonText}>Start a conversation</Text>
+                <TouchableOpacity onPress={() => startConversation()}>
+                  <Text style={styles.buttonText}>Start a conversation</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
             ) : null}
 
             {/* Rejected Appointment */}
-            {data.status === "Declined" ? (
+            {CheckStatus === "Declined" ? (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("MakeAppointmentScreen", {
@@ -207,7 +352,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
           </View>
 
           {/* Pending Appointment */}
-          {data.status === "Pending" ? (
+          {CheckStatus === "Pending" ? (
             <View
               style={{
                 flexDirection: "row",

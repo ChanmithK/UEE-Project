@@ -27,27 +27,29 @@ const ViewCounsellorsSubPage = () => {
 
   const [searchKey, setSearchKey] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [counsellorList, setMentorList] = useState([]);
+  const [counsellorList, setCounsellorList] = useState([]);
 
   useEffect(() => {
-    const getMentors = async () => {
+    const getcounsellors = async () => {
       const counsellors = await getDocs(
         query(collection(db, "Users"), where("role", "==", "Counsellor"))
       );
-      setMentorList(counsellors.docs.map((doc) => doc.data()));
-      setSearchResult(counsellors.docs.map((doc) => doc.data()));
+      setCounsellorList(
+        counsellors.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+      setSearchResult(
+        counsellors.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     };
-    getMentors();
+    getcounsellors();
   }, []);
 
-  const searchMentors = (text) => {
+  const searchCounsellor = (text) => {
     setSearchKey(text);
 
     setSearchResult(
-      counsellorList.filter(
-        (counsellor) =>
-          counsellor.name.toLowerCase().includes(text.toLowerCase()) ||
-          counsellor.position.toLowerCase().includes(text.toLowerCase())
+      counsellorList.filter((counsellor) =>
+        counsellor.name.toLowerCase().includes(text.toLowerCase())
       )
     );
   };
@@ -71,6 +73,8 @@ const ViewCounsellorsSubPage = () => {
             placeholderTextColor="gray"
             multiline={false}
             style={styles.input}
+            onChangeText={(text) => searchCounsellor(text)}
+            value={searchKey}
           />
           <Image
             source={{
@@ -86,20 +90,29 @@ const ViewCounsellorsSubPage = () => {
             <View>
               <View style={{ marginBottom: 250 }}>
                 {searchResult.map((counsellor, index) => (
-                  <View style={styles.counsellorContainer} key={index}>
-                    <Image
-                      source={{ uri: counsellor.image }}
-                      style={styles.image}
-                    />
-                    <View style={styles.counsellorDetails}>
-                      <Text style={styles.counsellorName}>
-                        {counsellor.name}
-                      </Text>
-                      <Text style={styles.counsellorStatus}>
-                        {counsellor.status}
-                      </Text>
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() =>
+                      navigation.navigate("ViewCounsellorScreen", {
+                        id: counsellor.id,
+                      })
+                    }
+                  >
+                    <View style={styles.counsellorContainer} key={index}>
+                      <Image
+                        source={{ uri: counsellor.image }}
+                        style={styles.image}
+                      />
+                      <View style={styles.counsellorDetails}>
+                        <Text style={styles.counsellorName}>
+                          {counsellor.name}
+                        </Text>
+                        <Text style={styles.counsellorStatus}>
+                          {counsellor.position}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>

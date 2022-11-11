@@ -2,36 +2,49 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export const bottomTabIcons = [
   {
     name: "Message",
     active: "https://img.icons8.com/ios/50/ED6A8C/topic.png",
     inactive: "https://img.icons8.com/ios/50/000000/topic.png",
-    page: "Message",
+    page: ["ChatListScreen", "ChatListScreen"],
   },
   {
     name: "Home",
     active: "https://img.icons8.com/ios/50/ED6A8C/home--v1.png",
     inactive: "https://img.icons8.com/ios/50/000000/home--v1.png",
-    page: "ClientHomeScreen",
+    page: ["ClientHomeScreen", "ClientHomeScreen"],
   },
   {
     name: "Dashboard",
     active: "https://img.icons8.com/ios/50/ED6A8C/windows-11.png",
     inactive: "https://img.icons8.com/ios/50/000000/windows-11.png",
-    page: "MenuScreen",
+    page: ["MenuScreen", "CounsellorMenuScreen"],
   },
 ];
 const BottomTabs = ({ icons }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Home");
+  const [role, setRole] = useState("");
+
+  const getAppointments = async () => {
+    const value = await AsyncStorage.getItem("UserRole");
+    const user = JSON.parse(value);
+    setRole(user);
+  };
+
+  getAppointments();
 
   const Icon = ({ icon }) => (
     <TouchableOpacity
       onPress={() => {
         setActiveTab(icon.name);
-        navigation.navigate(icon.page);
+        role === "User"
+          ? navigation.navigate(icon.page[0])
+          : navigation.navigate(icon.page[1]);
       }}
     >
       <Image
