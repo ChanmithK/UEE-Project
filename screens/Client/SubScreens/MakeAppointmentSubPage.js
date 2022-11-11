@@ -7,6 +7,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  ActivityIndicator,
   KeyboardAvoidingView,
 } from "react-native";
 import React, { useState } from "react";
@@ -30,6 +31,7 @@ const MakeAppointmentSchema = Yup.object().shape({
 
 const MakeAppointmentSubPage = ({ id, name, role, image }) => {
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
   const windowHeight = Dimensions.get("window").height;
   const appointmentCollectionRef = collection(db, "CounsellorAppointments");
@@ -94,6 +96,7 @@ const MakeAppointmentSubPage = ({ id, name, role, image }) => {
   };
 
   const createAppointment = async (values) => {
+    setLoading(true);
     const value = await AsyncStorage.getItem("UserID");
     const user = JSON.parse(value);
 
@@ -126,185 +129,202 @@ const MakeAppointmentSubPage = ({ id, name, role, image }) => {
           console.error("Error adding document: ", error);
         });
     }
+    setLoading(false);
   };
 
   return (
-    <Formik
-      initialValues={{
-        _title: "",
-        _description: "",
-        // _date: "",
-        // _time: "",
-      }}
-      onSubmit={(values) => {
-        createAppointment(values);
-      }}
-      validationSchema={MakeAppointmentSchema}
-      validateOnMount={false}
-    >
-      {({ handleBlur, handleChange, handleSubmit, values, errors }) => (
-        <>
-          <View style={styles.container}>
-            <KeyboardAvoidingView
-              behavior="position"
-              keyboardVerticalOffset={10}
-              enabled
-            >
-              {/* Top bar */}
-              <TopBar title={"Make appointment"} />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "50%" }}
+        />
+      ) : (
+        <Formik
+          initialValues={{
+            _title: "",
+            _description: "",
+            // _date: "",
+            // _time: "",
+          }}
+          onSubmit={(values) => {
+            createAppointment(values);
+          }}
+          validationSchema={MakeAppointmentSchema}
+          validateOnMount={false}
+        >
+          {({ handleBlur, handleChange, handleSubmit, values, errors }) => (
+            <>
+              <View style={styles.container}>
+                <KeyboardAvoidingView
+                  behavior="position"
+                  keyboardVerticalOffset={10}
+                  enabled
+                >
+                  {/* Top bar */}
+                  <TopBar title={"Make appointment"} />
 
-              {/* Content */}
-              <View
-                style={{
-                  marginHorizontal: 10,
-                  marginVertical: 30,
-                }}
-              >
-                {/* Field data */}
-                <View>
-                  <ScrollView>
+                  {/* Content */}
+                  <View
+                    style={{
+                      marginHorizontal: 10,
+                      marginVertical: 30,
+                    }}
+                  >
+                    {/* Field data */}
                     <View>
-                      <Text style={styles.mainFieldName}>Title</Text>
-                      <TextInput
-                        multiline={true}
-                        style={[styles.input, { height: 40 }]}
-                        // onChangeText={(text) => setTitle(text)}
-                        onChangeText={handleChange("_title")}
-                        onBlur={handleBlur("_title")}
-                        value={values._title}
-                      />
-                      {errors._title && (
-                        <Text style={styles.formikErrorMessage}>
-                          {errors._title}
-                        </Text>
-                      )}
-                      <Text style={styles.mainFieldName}>Description</Text>
-                      <TextInput
-                        placeholderTextColor="white"
-                        multiline={true}
-                        style={[styles.input, { height: 145 }]}
-                        // onChangeText={(text) => setDescription(text)}
-                        onChangeText={handleChange("_description")}
-                      />
-                      {errors._description && (
-                        <Text style={styles.formikErrorMessage}>
-                          {errors._description}
-                        </Text>
-                      )}
-
-                      <TouchableOpacity onPress={displayDatepicker}>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            marginTop: 20,
-                          }}
-                        >
+                      <ScrollView>
+                        <View>
+                          <Text style={styles.mainFieldName}>Title</Text>
                           <TextInput
                             multiline={true}
-                            defaultValue={newDate ? newDate : "Date"}
-                            editable={false}
-                            style={[styles.input, { height: 40, width: "85%" }]}
-                            // onChangeText={(text) => setSex(text)}
-                            // onChangeText={handleChange("_date")}
-                            // onBlur={handleBlur("_date")}
-                            // value={values._date}
+                            style={[styles.input, { height: 40 }]}
+                            // onChangeText={(text) => setTitle(text)}
+                            onChangeText={handleChange("_title")}
+                            onBlur={handleBlur("_title")}
+                            value={values._title}
                           />
-
-                          <Image
-                            source={{
-                              uri: "https://img.icons8.com/ios/50/null/calendar-30.png",
-                            }}
-                            style={{
-                              height: 30,
-                              width: 30,
-                              marginTop: 15,
-                              marginLeft: 10,
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity onPress={displayTimepicker}>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            marginTop: 20,
-                          }}
-                        >
+                          {errors._title && (
+                            <Text style={styles.formikErrorMessage}>
+                              {errors._title}
+                            </Text>
+                          )}
+                          <Text style={styles.mainFieldName}>Description</Text>
                           <TextInput
+                            placeholderTextColor="white"
                             multiline={true}
-                            value={newtime ? newtime : "Time"}
-                            editable={false}
-                            style={[styles.input, { height: 40, width: "85%" }]}
-                            // onChangeText={(text) => setSex(text)}
-                            // onChangeText={handleChange("_time")}
-                            // onBlur={handleBlur("_time")}
-                            // value={values._time}
+                            style={[styles.input, { height: 145 }]}
+                            // onChangeText={(text) => setDescription(text)}
+                            onChangeText={handleChange("_description")}
                           />
+                          {errors._description && (
+                            <Text style={styles.formikErrorMessage}>
+                              {errors._description}
+                            </Text>
+                          )}
 
-                          <Image
-                            source={{
-                              uri: "https://img.icons8.com/ios/50/null/time--v1.png",
-                            }}
-                            style={{
-                              height: 30,
-                              width: 30,
-                              marginTop: 15,
-                              marginLeft: 10,
-                            }}
-                          />
+                          <TouchableOpacity onPress={displayDatepicker}>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                marginTop: 20,
+                              }}
+                            >
+                              <TextInput
+                                multiline={true}
+                                defaultValue={newDate ? newDate : "Date"}
+                                editable={false}
+                                style={[
+                                  styles.input,
+                                  { height: 40, width: "85%" },
+                                ]}
+                                // onChangeText={(text) => setSex(text)}
+                                // onChangeText={handleChange("_date")}
+                                // onBlur={handleBlur("_date")}
+                                // value={values._date}
+                              />
+
+                              <Image
+                                source={{
+                                  uri: "https://img.icons8.com/ios/50/null/calendar-30.png",
+                                }}
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  marginTop: 15,
+                                  marginLeft: 10,
+                                }}
+                              />
+                            </View>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity onPress={displayTimepicker}>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                marginTop: 20,
+                              }}
+                            >
+                              <TextInput
+                                multiline={true}
+                                value={newtime ? newtime : "Time"}
+                                editable={false}
+                                style={[
+                                  styles.input,
+                                  { height: 40, width: "85%" },
+                                ]}
+                                // onChangeText={(text) => setSex(text)}
+                                // onChangeText={handleChange("_time")}
+                                // onBlur={handleBlur("_time")}
+                                // value={values._time}
+                              />
+
+                              <Image
+                                source={{
+                                  uri: "https://img.icons8.com/ios/50/null/time--v1.png",
+                                }}
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  marginTop: 15,
+                                  marginLeft: 10,
+                                }}
+                              />
+                            </View>
+                          </TouchableOpacity>
                         </View>
-                      </TouchableOpacity>
+
+                        {isDisplayDate && (
+                          <DateTimePicker
+                            value={mydate}
+                            mode={displaymode}
+                            is24Hour={true}
+                            display="default"
+                            onChange={changeSelectedDate}
+                          />
+                        )}
+                      </ScrollView>
                     </View>
 
-                    {isDisplayDate && (
-                      <DateTimePicker
-                        value={mydate}
-                        mode={displaymode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={changeSelectedDate}
-                      />
-                    )}
-                  </ScrollView>
-                </View>
-
-                {/* Buttons */}
-                <View
-                  style={{
-                    position: "absolute",
-                    top: windowHeight - 180,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // marginTop: 20,
-                  }}
-                >
-                  <TouchableOpacity
-                    // onPress={handleSubmit}
-                    style={{
-                      backgroundColor: "#ED6A8C",
-                      width: "100%",
-                      height: 50,
-                      borderRadius: 10,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      alignSelf: "center",
-                      marginTop: 30,
-                      //   marginHorizontal: 0,
-                    }}
-                    onPress={handleSubmit}
-                  >
-                    <Text style={styles.buttonText}>Make Appointment</Text>
-                  </TouchableOpacity>
-                </View>
+                    {/* Buttons */}
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: windowHeight - 180,
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        // marginTop: 20,
+                      }}
+                    >
+                      <TouchableOpacity
+                        // onPress={handleSubmit}
+                        style={{
+                          backgroundColor: "#ED6A8C",
+                          width: "100%",
+                          height: 50,
+                          borderRadius: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          alignSelf: "center",
+                          marginTop: 30,
+                          //   marginHorizontal: 0,
+                        }}
+                        onPress={handleSubmit}
+                      >
+                        <Text style={styles.buttonText}>Make Appointment</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </KeyboardAvoidingView>
               </View>
-            </KeyboardAvoidingView>
-          </View>
-        </>
+            </>
+          )}
+        </Formik>
       )}
-    </Formik>
+    </>
   );
 };
 

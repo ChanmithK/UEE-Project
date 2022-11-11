@@ -24,7 +24,7 @@ const AppointmentHistoryListSubPage = () => {
   const windowHeight = Dimensions.get("window").height;
   return (
     <View style={{ height: windowHeight }}>
-      <TopBar title="Appointments" isFilterAvailable="true" />
+      <TopBar title="Appointments History" isFilterAvailable="true" />
       <View style={styles.MainContainer}>
         {/* <SearchBar /> */}
         <View>
@@ -82,7 +82,7 @@ const CounsellorAppointmentList = () => {
       getAppointments();
     }
     searchAppointment();
-  }, [search, appointments]);
+  }, [search]);
 
   const searchAppointment = () => {
     const filtered = appointments.filter((appointment) =>
