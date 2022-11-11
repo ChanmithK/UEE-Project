@@ -7,6 +7,7 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  ActivityIndicator,
   KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect } from "react";
@@ -17,7 +18,6 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   getDatabase,
-  firebase,
   get,
   ref,
   set,
@@ -29,7 +29,7 @@ import {
 const ViewClientAppointmentSubPage = ({ id }) => {
   const navigation = useNavigation();
   // const [clientData, setClientData] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -89,6 +89,7 @@ const ViewClientAppointmentSubPage = ({ id }) => {
   };
 
   const startConversation = async () => {
+    setLoading(true);
     const database = getDatabase();
     const isClient = await findUser(data.name);
     var clientData = null;
@@ -118,9 +119,6 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       set(ref(database, `users/${data.counsellorName}`), newUserObj);
       counsellorData = newUserObj;
     }
-
-    // console.log("CLIENT", clientData);
-    // console.log("Counsellor", counsellorData);
 
     if (clientData.friends) {
       clientData.friends.findIndex((f) => {
@@ -204,208 +202,222 @@ const ViewClientAppointmentSubPage = ({ id }) => {
       user: clientData,
       reciever: counsellorData,
     });
+    setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={10}
-        enabled
-      >
-        {/* Top bar */}
-        <TopBar title={"Appointment details"} />
+    <>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ED6A8C"
+          style={{ marginVertical: "50%" }}
+        />
+      ) : (
+        <View style={styles.container}>
+          <KeyboardAvoidingView
+            behavior="position"
+            keyboardVerticalOffset={10}
+            enabled
+          >
+            {/* Top bar */}
+            <TopBar title={"Appointment details"} />
 
-        {/* Content */}
-        <View
-          style={{
-            marginHorizontal: 10,
-            marginVertical: 30,
-          }}
-        >
-          {/* Field data */}
-          <View style={{ maxHeight: 560 }}>
-            <ScrollView>
-              <View style={{ marginBottom: 100 }}>
-                <Text style={styles.mainFieldName}>Status</Text>
-                <TextInput
-                  multiline={true}
-                  editable={false}
-                  defaultValue={CheckStatus ? CheckStatus : "Pending"}
-                  style={[
-                    styles.input,
-                    { height: 40, color: "#ED6A8C", fontWeight: "bold" },
-                  ]}
-                />
-                <Text style={styles.mainFieldName}>Title</Text>
-                <TextInput
-                  multiline={true}
-                  editable={false}
-                  defaultValue={data.title}
-                  style={[styles.input, { height: 40 }]}
-                />
-                <Text style={styles.mainFieldName}>Description</Text>
-                <TextInput
-                  placeholderTextColor="white"
-                  editable={false}
-                  multiline={true}
-                  defaultValue={data.description}
-                  style={[styles.input, { height: 145 }]}
-                />
-                <Text style={styles.mainFieldName}>Date</Text>
-                <TextInput
-                  multiline={true}
-                  editable={false}
-                  defaultValue={data.date}
-                  style={[styles.input, { height: 40 }]}
-                />
-                <Text style={styles.mainFieldName}>Time</Text>
-                <TextInput
-                  multiline={true}
-                  editable={false}
-                  defaultValue={data.time}
-                  style={[styles.input, { height: 40 }]}
-                />
-                {CheckStatus === "Approved" ? (
-                  <>
-                    <Text style={styles.mainFieldName}>Session Link</Text>
+            {/* Content */}
+            <View
+              style={{
+                marginHorizontal: 10,
+                marginVertical: 30,
+              }}
+            >
+              {/* Field data */}
+              <View style={{ maxHeight: 620 }}>
+                <ScrollView>
+                  <View style={{ marginBottom: 50 }}>
+                    <Text style={styles.mainFieldName}>Status</Text>
                     <TextInput
                       multiline={true}
                       editable={false}
-                      defaultValue={
-                        data.sessionUrl ? data.sessionUrl : "No link"
-                      }
+                      defaultValue={CheckStatus ? CheckStatus : "Pending"}
+                      style={[
+                        styles.input,
+                        { height: 40, color: "#ED6A8C", fontWeight: "bold" },
+                      ]}
+                    />
+                    <Text style={styles.mainFieldName}>Title</Text>
+                    <TextInput
+                      multiline={true}
+                      editable={false}
+                      defaultValue={data.title}
                       style={[styles.input, { height: 40 }]}
                     />
-                  </>
-                ) : null}
-                {CheckStatus === "Approved" || CheckStatus === "Declined" ? (
-                  <>
-                    <Text style={styles.mainFieldName}>
-                      Counsellor/Mentor Note
-                    </Text>
+                    <Text style={styles.mainFieldName}>Description</Text>
                     <TextInput
                       placeholderTextColor="white"
                       editable={false}
                       multiline={true}
-                      defaultValue={data.note ? data.note : "No note"}
+                      defaultValue={data.description}
                       style={[styles.input, { height: 145 }]}
                     />
-                  </>
+                    <Text style={styles.mainFieldName}>Date</Text>
+                    <TextInput
+                      multiline={true}
+                      editable={false}
+                      defaultValue={data.date}
+                      style={[styles.input, { height: 40 }]}
+                    />
+                    <Text style={styles.mainFieldName}>Time</Text>
+                    <TextInput
+                      multiline={true}
+                      editable={false}
+                      defaultValue={data.time}
+                      style={[styles.input, { height: 40 }]}
+                    />
+                    {CheckStatus === "Approved" ? (
+                      <>
+                        <Text style={styles.mainFieldName}>Session Link</Text>
+                        <TextInput
+                          multiline={true}
+                          editable={false}
+                          defaultValue={
+                            data.sessionUrl ? data.sessionUrl : "No link"
+                          }
+                          style={[styles.input, { height: 40 }]}
+                        />
+                      </>
+                    ) : null}
+                    {CheckStatus === "Approved" ||
+                    CheckStatus === "Declined" ? (
+                      <>
+                        <Text style={styles.mainFieldName}>
+                          Counsellor/Mentor Note
+                        </Text>
+                        <TextInput
+                          placeholderTextColor="white"
+                          editable={false}
+                          multiline={true}
+                          defaultValue={data.note ? data.note : "No note"}
+                          style={[styles.input, { height: 145 }]}
+                        />
+                      </>
+                    ) : null}
+                  </View>
+                </ScrollView>
+              </View>
+
+              {/* Buttons */}
+              <View
+                style={{
+                  position: "absolute",
+                  top: windowHeight - 180,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  // marginTop: 20,
+                }}
+              >
+                {CheckStatus === "Approved" ? (
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ED6A8C",
+                      width: "100%",
+                      height: 50,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      alignSelf: "center",
+                      marginTop: 30,
+                    }}
+                  >
+                    <TouchableOpacity onPress={() => startConversation()}>
+                      <Text style={styles.buttonText}>
+                        Start a conversation
+                      </Text>
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                ) : null}
+
+                {/* Rejected Appointment */}
+                {CheckStatus === "Declined" ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("MakeAppointmentScreen", {
+                        id: data.counsellorId,
+                      })
+                    }
+                    style={{
+                      backgroundColor: "#ED6A8C",
+                      width: "100%",
+                      height: 50,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      alignSelf: "center",
+                      marginTop: 30,
+                      //   marginHorizontal: 0,
+                    }}
+                  >
+                    <Text style={styles.buttonText}>Book again</Text>
+                  </TouchableOpacity>
                 ) : null}
               </View>
-            </ScrollView>
-          </View>
 
-          {/* Buttons */}
-          <View
-            style={{
-              position: "absolute",
-              top: windowHeight - 180,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              // marginTop: 20,
-            }}
-          >
-            {CheckStatus === "Approved" ? (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ED6A8C",
-                  width: "100%",
-                  height: 50,
-                  borderRadius: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  marginTop: 30,
-                }}
-              >
-                <TouchableOpacity onPress={() => startConversation()}>
-                  <Text style={styles.buttonText}>Start a conversation</Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ) : null}
-
-            {/* Rejected Appointment */}
-            {CheckStatus === "Declined" ? (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("MakeAppointmentScreen", {
-                    id: data.counsellorId,
-                  })
-                }
-                style={{
-                  backgroundColor: "#ED6A8C",
-                  width: "100%",
-                  height: 50,
-                  borderRadius: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  marginTop: 30,
-                  //   marginHorizontal: 0,
-                }}
-              >
-                <Text style={styles.buttonText}>Book again</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-
-          {/* Pending Appointment */}
-          {CheckStatus === "Pending" ? (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginTop: 0,
-                marginVertical: 10,
-                marginHorizontal: 10,
-                marginLeft: 0,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ED6A8C",
-                  padding: 10,
-                  borderRadius: 10,
-                  alignItems: "center",
-                  // justifyContent: "center",
-                  width: "50%",
-                  alignSelf: "center",
-                  marginTop: 20,
-                  marginBottom: 10,
-                }}
-                onPress={deleteAppointment}
-              >
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ED6A8C",
-                  padding: 10,
-                  borderRadius: 10,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "50%",
-                  alignSelf: "center",
-                  marginLeft: 10,
-                  marginTop: 20,
-                  marginBottom: 10,
-                }}
-                onPress={() => {
-                  navigation.navigate("UpdateAppointmentScreen", {
-                    data: data,
-                    id: id,
-                  });
-                }}
-              >
-                <Text style={styles.buttonText}>Edit</Text>
-              </TouchableOpacity>
+              {/* Pending Appointment */}
+              {CheckStatus === "Pending" ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginTop: 0,
+                    marginVertical: 10,
+                    marginHorizontal: 10,
+                    marginLeft: 0,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ED6A8C",
+                      padding: 10,
+                      borderRadius: 10,
+                      alignItems: "center",
+                      // justifyContent: "center",
+                      width: "50%",
+                      alignSelf: "center",
+                      marginTop: 20,
+                      marginBottom: 10,
+                    }}
+                    onPress={deleteAppointment}
+                  >
+                    <Text style={styles.buttonText}>Delete</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ED6A8C",
+                      padding: 10,
+                      borderRadius: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "50%",
+                      alignSelf: "center",
+                      marginLeft: 10,
+                      marginTop: 20,
+                      marginBottom: 10,
+                    }}
+                    onPress={() => {
+                      navigation.navigate("UpdateAppointmentScreen", {
+                        data: data,
+                        id: id,
+                      });
+                    }}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </View>
-          ) : null}
+          </KeyboardAvoidingView>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      )}
+    </>
   );
 };
 

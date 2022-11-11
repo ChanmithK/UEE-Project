@@ -27,12 +27,6 @@ const ChatList = () => {
       const Snapshot = await get(ref(database, `users/${user}`));
       setUser(Snapshot.val());
     };
-    // const renderFriends = async () => {
-    //   const frSnapshot = await get(
-    //     ref(database, `users/${friends[0].username}`)
-    //   );
-    //   setReciever(frSnapshot.val());
-
     getUser();
   }, []);
 
@@ -50,18 +44,24 @@ const ChatList = () => {
       <SafeAreaView style={styles.container}>
         <TopBar title={"Messages"} />
         <View style={{ margin: 20 }}>
-          {friends.map((friend) => {
-            return (
-              <TouchableOpacity onPress={() => onClick(friend)}>
-                <View style={styles.counsellorContainer}>
-                  <Image source={{ uri: friend.avatar }} style={styles.image} />
-                  <View style={styles.counsellorDetails}>
-                    <Text style={styles.counsellorName}>{friend.username}</Text>
+          {friends &&
+            friends.map((friend) => {
+              return (
+                <TouchableOpacity onPress={() => onClick(friend)}>
+                  <View style={styles.counsellorContainer}>
+                    <Image
+                      source={{ uri: friend.avatar }}
+                      style={styles.image}
+                    />
+                    <View style={styles.counsellorDetails}>
+                      <Text style={styles.counsellorName}>
+                        {friend.username}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+                </TouchableOpacity>
+              );
+            })}
         </View>
       </SafeAreaView>
     </View>
